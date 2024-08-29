@@ -1,16 +1,20 @@
-// typedef struct Item* ptr;
+#include <iostream>
+using namespace std;
 
-// struct Item
+typedef struct Item* ptr;
 
-// {
+struct Item
 
-//     double coef; // coefficient
+{
 
-//     int exp; // exponent
+     double coef; // coefficient
 
-//     ptr next;
+     int exp; // exponent
 
-// }
+    ptr next;
+
+}
+
 ptr inputPolynomial(){
     ptr head = nullptr;
     double coef; int exp;
@@ -23,4 +27,9 @@ ptr inputPolynomial(){
         head = newHead;
     }
     return head
+}
+
+int main ()
+{
+    return 0;
 }
