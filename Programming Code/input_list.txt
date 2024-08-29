@@ -1,0 +1,24 @@
+ typedef struct Item ptr;
+
+ struct Item
+
+ {
+
+     int value;
+
+     ptr next;
+
+ }
+ptr inputList() {
+    ptr head = nullptr;  
+    int value; 
+    while (true) {
+        cinvalue;
+        if (value  0) break;
+        ptr newHead = new Item; 
+        newHead-value = value;  
+        newHead-next = head;   
+        head = newHead;          
+    }
+    return head; 
+}
