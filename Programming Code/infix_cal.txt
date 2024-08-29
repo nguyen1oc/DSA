@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <string.h>
 using namespace std;
 
 string infix_cal (const string & input)
@@ -19,4 +20,16 @@ string infix_cal (const string & input)
 		return to_string(op1/op2);
 		default: return "invalid";
 	}
+}
+
+int main() {
+    string input;
+    
+    cout << "Enter an infix expression (e.g., '3 + 4'): ";
+    getline(cin, input);
+
+    string result = infix_cal(input);
+    cout << "Result: " << result << endl;
+
+    return 0;
 }
