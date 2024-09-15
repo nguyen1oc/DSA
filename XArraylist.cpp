@@ -437,10 +437,7 @@ void XArrayList<T>::ensureCapacity(int index)
             delete[] data;
             data = newData;
             capacity = newCap;
-        }catch(throw std::bad_alloc){
-            std::cerr<<"Memory allocation failure";
-            throw;
-        }
+        }catch(throw std::bad_alloc){}
     }else if (index < 0){
         throw std::out_of_range("The index is out of range");
     }
