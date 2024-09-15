@@ -281,10 +281,14 @@ void XArrayList<T>::add(int index, T e)
     // TODO
     ensureCapacity(index);
     if (index < 0) throw std::out_of_range("Index is out of range");
-    for (int i = index; i <= count; i++){
-        data[i + 1] = data[i];
-    }
-    data[index] = e;
+    if (index >= count){
+        data[count] = e;
+    }else{
+        for (int i = index; i <= count; i++){
+            data[i + 1] = data[i];
+        }
+        data[index] = e;
+    }    
     count++;
 }
 
