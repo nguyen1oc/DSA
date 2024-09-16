@@ -516,7 +516,9 @@ void DLinkedList<T>::copyFrom(const DLinkedList<T> &list)
      * Iterates through the source list and adds each element, preserving the order of the nodes.
      */
     // TODO
-    //clear()
+    if (removeInternalData != nullptr){
+        removeInternalData();
+    }
     this -> count = list.count;
     Node* curr = list.head->next;
     while (curr != list.tail) {
