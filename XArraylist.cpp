@@ -331,7 +331,7 @@ template <class T>
 bool XArrayList<T>::empty()
 {
     // TODO
-    if (count != 0) return true;
+    if (count == 0) return true;
     return false;
 }
 
