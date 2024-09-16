@@ -207,9 +207,9 @@ void XArrayList<T>::copyFrom(const XArrayList<T> &list)
      * Also duplicates user-defined comparison and deletion functions, if applicable.
      */
     // TODO
-    // if (data != nullptr){
-    //     removeInternalData();
-    // }
+    if (removeInternalData != nullptr){
+        removeInternalData();
+    }
     this -> capacity = list.capacity;
     this -> count = list.count;
     this -> data = new T[list.capacity];
