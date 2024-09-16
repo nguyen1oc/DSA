@@ -233,7 +233,7 @@ void XArrayList<T>::removeInternalData()
      */
     // TODO
     if (deleteUserData != nullptr){
-        deleteUserData(this);// 
+            deleteUserData(this);
     }
     delete[] data;
     data = nullptr;
@@ -392,9 +392,13 @@ string XArrayList<T>::toString(string (*item2str)(T &))
 
     // TODO
     stringstream ss;
+    bool isComma = true;
     ss << "[";
     for (int i = 0; i < count; i++){
-        if (i > 0) ss<<", ";
+        if (!isComma){
+            ss <<", ";
+        }
+        isComma = false;
         if (item2str != nullptr){
             ss << item2str(data[i]);
         }else ss << data[i];
