@@ -4,7 +4,7 @@
 
 #ifndef XARRAYLIST_H
 #define XARRAYLIST_H
-#include "IList.h"
+#include "list/IList.h"
 #include <memory.h>
 #include <sstream>
 #include <iostream>
@@ -282,12 +282,12 @@ void XArrayList<T>::add(int index, T e)
     // TODO
     ensureCapacity(index);
     checkIndex(index);
-    if (index < 0) throw std::out_of_range("Index is out of range (add T e)");
+    if (index < 0) throw std::out_of_range("Index is out of range!");
     if (index >= count){
         add(e);
     }else{
-        for (int i = index; i <= count; i++){
-            data[i + 1] = data[i];
+        for (int i = count; i > index; i--){
+            data[i] = data[i - 1];
         }
         data[index] = e;
         count++;
@@ -299,7 +299,7 @@ T XArrayList<T>::removeAt(int index)
 {
     // TODO
     checkrealIndex(index);
-    T removeE = this -> data[index];
+    T removeE = data[index];
     if(deleteUserData != nullptr){
         deleteUserData(this);
     }
@@ -316,7 +316,7 @@ bool XArrayList<T>::removeItem(T item, void (*removeItemData)(T))
     // TODO
     //using itemeqal
     for (int i = 0; i < count; i++){
-        if (equals(data[i],item,itemEqual)){
+        if (equals(item,data[i],itemEqual)){
             if(removeItemData != nullptr){
                 removeItemData(data[i]);
             }
@@ -420,7 +420,7 @@ void XArrayList<T>::checkIndex(int index)
      */
     // TODO
     if (index < 0 || index > count){
-        throw std::out_of_range("Index is negative or exceeds the number of elements (fake index)");
+        throw std::out_of_range("Index is out of range!");
     }
 }
 
@@ -428,7 +428,7 @@ template <class T>
 void XArrayList<T>::checkrealIndex(int index)
 {
     if (index < 0 || index >= count){
-        throw std::out_of_range("Index is negative or exceeds the number of elements (real index)");
+        throw std::out_of_range("Index is out of range!");
     }
 }
 template <class T>
@@ -460,7 +460,7 @@ void XArrayList<T>::ensureCapacity(int index)
             throw;
         }
     }else if (index < 0){
-        throw std::out_of_range("The index is out of range (in ensure)");
+        throw std::out_of_range("Index is out of range!");
     }
 }
 
