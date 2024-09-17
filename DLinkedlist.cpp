@@ -5,7 +5,7 @@
 #ifndef DLINKEDLIST_H
 #define DLINKEDLIST_H
 
-#include "IList.h"
+#include "list/IList.h"
 
 #include <sstream>
 #include <iostream>
@@ -46,6 +46,7 @@ public:
     T &get(int index);
     int indexOf(T item);
     void checkIndex(int index);
+    void checkRealIndex(int index);
     bool contains(T item);
     string toString(string (*item2str)(T &) = 0);
     // Inherit from IList: END
@@ -182,7 +183,7 @@ public:
             else
             {
                 if (pList != 0)
-                    this->pNode = pList->tail;
+                    this->pNode = pList->tail->prev;
                 else
                     pNode = 0;
             }
@@ -228,6 +229,69 @@ public:
             ++*this;
             return iterator;
         }
+    };
+
+    class BWDIterator{
+private:
+    DLinkedList<T>* pList;
+    Node* currentNode;
+
+public:
+    BWDIterator(DLinkedList<T>* pList = 0, bool begin = true){
+        if (begin) {
+            if (pList != 0) {
+                this->currentNode = pList->head->next;
+            } else {
+                this->currentNode = 0;
+            }
+        } else {
+            if (pList != 0) {
+                this->currentNode = pList->tail->prev;
+            } else {
+                this->currentNode = 0;
+            }
+        }
+        this->pList = pList;
+    }
+
+    BWDIterator& operator=(const BWDIterator& iterator){
+        this->currentNode = iterator.currentNode;
+        this->pList = iterator.pList;
+        return *this;
+    }
+
+    void remove(void (*removeItemData)(T) = 0){
+        currentNode->prev->next = currentNode->next;
+        currentNode->next->prev = currentNode->prev;
+        Node* pNext = currentNode->prev; // MUST prev, so iterator++ will go to end
+        if (removeItemData != 0) {
+            removeItemData(currentNode->data);
+        }
+        delete currentNode;
+        currentNode = pNext;
+        pList->count -= 1;
+    }
+
+    T& operator*() {
+        return currentNode->data;
+    }
+
+    bool operator!=(const BWDIterator& iterator) {
+        return currentNode != iterator.currentNode;
+    }
+
+    // Prefix ++ overload
+    BWDIterator& operator--(){
+        currentNode = currentNode->prev;
+        return *this;
+    }
+
+    // Postfix ++ overload
+    BWDIterator operator--(int){
+        BWDIterator iterator = *this;
+        --*this;
+        return iterator; 
+    }
     };
 };
 //////////////////////////////////////////////////////////////////////
@@ -295,18 +359,11 @@ void DLinkedList<T>::add(T e)
     // TODO
     Node* newNode = new Node(e, nullptr, nullptr);
     // Handle case where the list is empty
-    if (head -> next == tail){
-        head -> next = newNode;
-        newNode -> prev = head;
-        tail -> prev = newNode;
-        newNode -> next = tail;
-    }else{
         // Add new node at the end of the list
         newNode -> prev = tail->prev;
         newNode -> next = tail;
         tail -> prev -> next = newNode;
         tail -> prev = newNode;
-    }
     count++;
     //cout<<"Normal 5"<<endl;
 }
@@ -324,9 +381,9 @@ void DLinkedList<T>::add(int index, T e)
             movement++;
             curr = curr -> next;
         }
-    Node* newNode = new Node(e, curr->next, curr);
-    curr -> next -> prev = newNode;
-    curr -> next = newNode;
+    Node* newNode = new Node(e, curr, curr -> prev);
+    curr -> prev -> next = newNode;
+    curr -> prev = newNode;
     count++;
     }
 }
@@ -340,11 +397,11 @@ typename DLinkedList<T>::Node *DLinkedList<T>::getPreviousNodeOf(int index) //ch
      * Efficiently navigates to the node by choosing the shorter path based on the index's position.
      */
     // TODO
-    checkIndex(index);
+    checkRealIndex(index);
     Node* curr = nullptr;
     int movement;
     if (count <= 1) return -1; //so luong be hon 1 thi out ra vi k co prev node?
-    if (index < (count/2)){
+    if (index <= (count/2)){
         curr = head -> next;
         movement = 0;
         while (curr){
@@ -371,24 +428,24 @@ template <class T>
 T DLinkedList<T>::removeAt(int index) //checkindex
 {
     // TODO
-    checkIndex(index);
+    checkRealIndex(index);
     if (deleteUserData != nullptr){
         deleteUserData(this);
     }
     Node* curr = head -> next;
-    count-- ;
     int movement = 0;
-    if ((curr -> next = tail) && (curr -> prev = head)){
-        head -> next = tail;
-        tail -> prev = head;
-        return curr -> data;
-    }
+    // if ((curr -> next = tail)){ //node cuoi thi sao? k the noi lai tu dau
+    //     head -> next = tail;
+    //     tail -> prev = head;
+    //     return curr -> data;
+    // }
     while (curr != tail){
         if (movement == index){
             curr -> next -> prev = curr -> prev;
             curr -> prev -> next = curr -> next;
             curr -> next = nullptr;
             curr -> prev = nullptr;
+            count--;
             return curr -> data;
         }
         curr = curr -> next;
@@ -426,14 +483,15 @@ template <class T>
 T &DLinkedList<T>::get(int index) //checkindex
 {
     // TODO
-    //checkindex
-    checkIndex(index);
+    checkRealIndex(index);
+   // if (index < 0 || index >= count) throw std::out_of_range("Index is out of range!");
     Node* curr = head -> next;
     int movement = 0;
     while (curr != tail){
         if (movement == index){
             return curr -> data;   
         }
+        movement++;
         curr = curr -> next;
     }
     return curr -> data; //dkw
@@ -466,8 +524,7 @@ bool DLinkedList<T>::removeItem(T item, void (*removeItemData)(T))
             if (removeItemData != nullptr){
                 removeItemData(curr -> data);
             }
-            removeAt(index);
-            count--;
+            removeAt(index); //Should deleterighthere
             return true;
         }
         index++;
@@ -479,8 +536,15 @@ bool DLinkedList<T>::removeItem(T item, void (*removeItemData)(T))
 template <class T>
 void DLinkedList<T>::checkIndex(int index){
     if (index < 0 || index > count){
-        throw std::out_of_range("Out of range!!!!!!!!!!!!!! (int check index)");
+        throw std::out_of_range("Index is out of range!");
     }    
+}
+
+template <class T>
+void DLinkedList<T>::checkRealIndex(int index){
+    if (index < 0 || index >= count){
+        throw std::out_of_range("Index is out of range!");
+    }   
 }
 
 template <class T>
