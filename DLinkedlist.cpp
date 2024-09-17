@@ -314,7 +314,7 @@ template <class T>
 void DLinkedList<T>::add(int index, T e)
 {
     // TODO
-    //checkIndex(index);
+    checkIndex(index);
     int movement = 0;
     Node* curr = head -> next;
     if (index == count) {
@@ -324,9 +324,9 @@ void DLinkedList<T>::add(int index, T e)
             movement++;
             curr = curr -> next;
         }
-    Node* newNode = new Node(e, curr, curr->prev);
-    curr -> prev -> next = newNode;
-    curr -> prev = newNode;
+    Node* newNode = new Node(e, curr->next, curr);
+    curr -> next -> prev = newNode;
+    curr -> next = newNode;
     count++;
     }
 }
@@ -341,16 +341,30 @@ typename DLinkedList<T>::Node *DLinkedList<T>::getPreviousNodeOf(int index) //ch
      */
     // TODO
     checkIndex(index);
-    Node* curr = head -> next;
-    int movement = 0;
+    Node* curr = nullptr;
+    int movement;
     if (count <= 1) return -1; //so luong be hon 1 thi out ra vi k co prev node?
-    while (curr != tail){
-        if (movement == index){
-            return curr -> prev;   
+    if (index < (count/2)){
+        curr = head -> next;
+        movement = 0;
+        while (curr){
+            if (movement == index){
+                return curr -> prev;   
         }
-        curr = curr -> next;
+            curr = curr -> next;
+            movement++;
+        }
+    }else{
+        curr = tail -> prev;
+        movement = count - 1;
+        while (curr){
+            if (movement == index){
+                return curr -> prev;   
+        }
+            curr = curr -> prev;
+            movement--;
+        }
     }
-    //chia de search may reduce the time code run but still O(n) i guess lol
 }
 
 template <class T>
@@ -464,7 +478,7 @@ bool DLinkedList<T>::removeItem(T item, void (*removeItemData)(T))
 
 template <class T>
 void DLinkedList<T>::checkIndex(int index){
-    if (index < 0 || index >= count){
+    if (index < 0 || index > count){
         throw std::out_of_range("Out of range!!!!!!!!!!!!!! (int check index)");
     }    
 }
