@@ -183,7 +183,7 @@ public:
             else
             {
                 if (pList != 0)
-                    this->pNode = pList->tail->prev;
+                    this->pNode = pList->tail;
                 else
                     pNode = 0;
             }
@@ -231,68 +231,64 @@ public:
         }
     };
 
-    class BWDIterator{
+class BWDIterator {
+    // TODO implement
 private:
-    DLinkedList<T>* pList;
-    Node* currentNode;
+  DLinkedList<T>* pList;
+  Node* pNode;
 
 public:
-    BWDIterator(DLinkedList<T>* pList = 0, bool begin = true){
-        if (begin) {
-            if (pList != 0) {
-                this->currentNode = pList->head->next;
-            } else {
-                this->currentNode = 0;
-            }
-        } else {
-            if (pList != 0) {
-                this->currentNode = pList->tail->prev;
-            } else {
-                this->currentNode = 0;
-            }
-        }
-        this->pList = pList;
+  BWDIterator(DLinkedList<T>* pList = nullptr, bool begin = true) {
+    if (begin) {
+      if (pList != nullptr)
+        this -> pNode = pList -> tail -> prev;
+      else
+        pNode = 0;
+    } 
+    else {
+      if (pList != 0)
+        this->pNode = pList -> head;
+      else
+        pNode = 0;
     }
+    this -> pList = pList;
+  }
 
-    BWDIterator& operator=(const BWDIterator& iterator){
-        this->currentNode = iterator.currentNode;
-        this->pList = iterator.pList;
-        return *this;
-    }
+  BWDIterator& operator=(const BWDIterator& iterator) {
+    this -> pNode = iterator.pNode;
+    this -> pList = iterator.pList;
+    return *this;
+  }
 
-    void remove(void (*removeItemData)(T) = 0){
-        currentNode->prev->next = currentNode->next;
-        currentNode->next->prev = currentNode->prev;
-        Node* pNext = currentNode->prev; // MUST prev, so iterator++ will go to end
-        if (removeItemData != 0) {
-            removeItemData(currentNode->data);
-        }
-        delete currentNode;
-        currentNode = pNext;
-        pList->count -= 1;
-    }
+  T& operator*() { return pNode->data; }
 
-    T& operator*() {
-        return currentNode->data;
-    }
+  bool operator!=(const BWDIterator& iterator) {
+    return pNode != iterator.pNode;
+  }
 
-    bool operator!=(const BWDIterator& iterator) {
-        return currentNode != iterator.currentNode;
-    }
+  BWDIterator& operator--() {
+    pNode = pNode -> prev;
+    return *this;
+  }
 
-    // Prefix ++ overload
-    BWDIterator& operator--(){
-        currentNode = currentNode->prev;
-        return *this;
-    }
+  BWDIterator operator--(int) {
+    BWDIterator iterator = *this;
+    --*this;
+    return iterator;
+  }
 
-    // Postfix ++ overload
-    BWDIterator operator--(int){
-        BWDIterator iterator = *this;
-        --*this;
-        return iterator; 
+  void remove(void (*removeItemData)(T) = nullptr) {
+    pNode -> prev -> next = pNode -> next;
+    pNode -> next -> prev = pNode -> prev;
+    Node* pNext = pNode -> next;
+    if (removeItemData != 0) {
+        removeItemData(pNode -> data);
     }
-    };
+    delete pNode;
+    pNode = pNext;
+    pList -> count -= 1;
+  }
+}; //class BWDI
 };
 //////////////////////////////////////////////////////////////////////
 // Define a shorter name for DLinkedList:
@@ -381,8 +377,11 @@ void DLinkedList<T>::add(int index, T e)
             movement++;
             curr = curr -> next;
         }
-    Node* newNode = new Node(e, curr, curr -> prev);
+    //Node* newNode = new Node(e, curr, curr -> prev);
+    Node* newNode = new Node(e, nullptr, nullptr);
     curr -> prev -> next = newNode;
+    newNode -> prev = curr -> prev;
+    newNode -> next = curr;
     curr -> prev = newNode;
     count++;
     }
