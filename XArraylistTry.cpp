@@ -207,9 +207,7 @@ void XArrayList<T>::copyFrom(const XArrayList<T> &list)
      * Also duplicates user-defined comparison and deletion functions, if applicable.
      */
     // TODO
-    if (removeInternalData != nullptr){
-        removeInternalData();
-    }
+    //removeInternalData();
     this -> capacity = list.capacity;
     this -> count = list.count;
     this -> data = new T[list.capacity];
@@ -245,7 +243,8 @@ template <class T>
 XArrayList<T>::XArrayList(const XArrayList<T> &list)
 {
     // TODO
-    copyFrom(this);
+    //removeInternalData();
+    copyFrom(list);
 }
 
 template <class T>
@@ -256,7 +255,7 @@ XArrayList<T> &XArrayList<T>::operator=(const XArrayList<T> &list)
         removeInternalData();
         copyFrom(list);
     }
-    return *list;
+    return *this;
 }
 
 template <class T>
@@ -270,7 +269,7 @@ template <class T>
 void XArrayList<T>::add(T e)
 {
     // TODO
-    ensureCapacity(count);
+    ensureCapacity(count + 1);
     //ensureCapacity(indexOf(count));
     data[count] = e;
     count++;
@@ -281,6 +280,7 @@ void XArrayList<T>::add(int index, T e)
 {
     // TODO
     ensureCapacity(index);
+     ensureCapacity(count + 1);
     checkIndex(index);
     if (index < 0) throw std::out_of_range("Index is out of range!");
     if (index >= count){
@@ -439,7 +439,7 @@ void XArrayList<T>::ensureCapacity(int index)
      */
     // TODO
     if (index >= capacity){
-        if (capacity == 0) capacity == 1;
+        if (capacity == 0) capacity = 1;
         int newCap = capacity;
         while (newCap <= index){
             newCap *= 2;
