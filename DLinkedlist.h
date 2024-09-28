@@ -438,12 +438,14 @@ T DLinkedList<T>::removeAt(int index) //checkindex
     // }
     while (curr != tail){
         if (movement == index){
+            T data = curr -> data;
             curr -> next -> prev = curr -> prev;
             curr -> prev -> next = curr -> next;
             curr -> next = nullptr;
             curr -> prev = nullptr;
             count--;
-            return curr -> data;
+            delete curr;
+            return data;
         }
         curr = curr -> next;
         movement++;
@@ -471,9 +473,9 @@ void DLinkedList<T>::clear()
 {
     // TODO
     removeInternalData();
-    head -> next = tail;
-    tail -> prev = head;
-    count = 0;
+    // head -> next = tail;
+    // tail -> prev = head;
+    // count = 0;
 }
 
 template <class T>
@@ -526,6 +528,7 @@ bool DLinkedList<T>::removeItem(T item, void (*removeItemData)(T))
             curr -> prev -> next = curr -> next;
             curr -> next = nullptr;
             curr -> prev = nullptr;
+            delete curr;
             count--;
             return true;
         }
