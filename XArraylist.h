@@ -233,7 +233,7 @@ void XArrayList<T>::removeInternalData()
     if (deleteUserData != nullptr){
             deleteUserData(this);
     }
-    delete[] data;
+    delete []data;
     data = nullptr;
     count = 0;
     //capacity = 0
@@ -279,10 +279,9 @@ template <class T>
 void XArrayList<T>::add(int index, T e)
 {
     // TODO
-    ensureCapacity(index);
-     ensureCapacity(count + 1);
+    ensureCapacity(count + 1);
     checkIndex(index);
-    if (index < 0) throw std::out_of_range("Index is out of range!");
+    //if (index < 0) throw out_of_range("Index is out of range!");
     if (index >= count){
         add(e);
     }else{
@@ -345,7 +344,7 @@ void XArrayList<T>::clear()
     // TODO
     removeInternalData();
     data = new T[capacity];
-    count = 0;
+    //count = 0;
 }
 
 template <class T>
@@ -446,7 +445,7 @@ void XArrayList<T>::ensureCapacity(int index)
         }
         try{
             T* newData = new T[newCap];
-            for (int i = 0; i < newCap; i++){
+            for (int i = 0; i < count; i++){
                 newData[i] = data[i];
             }
             delete[] data;
@@ -457,7 +456,7 @@ void XArrayList<T>::ensureCapacity(int index)
             throw;
         }
     }else if (index < 0){
-        throw std::out_of_range("Index is out of range!");
+        throw out_of_range("Index is out of range!");
     }
 }
 
