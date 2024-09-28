@@ -322,7 +322,8 @@ template <class T>
 DLinkedList<T>::DLinkedList(const DLinkedList<T> &list)
 {
     // TODO
-    copyFrom(this);
+    //removeInternalData();
+    copyFrom(list);
     //cout<<"Normal 2"<<endl;
 }
 
@@ -336,7 +337,7 @@ DLinkedList<T> &DLinkedList<T>::operator=(const DLinkedList<T> &list)
         copyFrom(list);
     }
     //cout<<"Normal 3"<<endl;
-    return *list;
+    return *this;
 }
 
 template <class T>
@@ -354,8 +355,7 @@ void DLinkedList<T>::add(T e)
 {
     // TODO
     Node* newNode = new Node(e, nullptr, nullptr);
-    // Handle case where the list is empty
-        // Add new node at the end of the list
+        // Add ath the end
         newNode -> prev = tail->prev;
         newNode -> next = tail;
         tail -> prev -> next = newNode;
@@ -378,12 +378,12 @@ void DLinkedList<T>::add(int index, T e)
             curr = curr -> next;
         }
     //Node* newNode = new Node(e, curr, curr -> prev);
-    Node* newNode = new Node(e, nullptr, nullptr);
-    curr -> prev -> next = newNode;
-    newNode -> prev = curr -> prev;
-    newNode -> next = curr;
-    curr -> prev = newNode;
-    count++;
+        Node* newNode = new Node(e, nullptr, nullptr);
+        curr -> prev -> next = newNode;
+        newNode -> prev = curr -> prev;
+        newNode -> next = curr;
+        curr -> prev = newNode;
+        count++;
     }
 }
 
@@ -421,6 +421,7 @@ typename DLinkedList<T>::Node *DLinkedList<T>::getPreviousNodeOf(int index) //ch
             movement--;
         }
     }
+    return nullptr;
 }
 
 template <class T>
@@ -597,18 +598,19 @@ void DLinkedList<T>::copyFrom(const DLinkedList<T> &list)
      * Iterates through the source list and adds each element, preserving the order of the nodes.
      */
     // TODO
-    if (removeInternalData != nullptr){
-        removeInternalData();
-    }
-    this -> count = list.count;
+    //removeInternalData();
+    this -> head = new Node();
+    this -> tail = new Node();
+    head -> next = tail;
+    tail -> prev = head;
     Node* curr = list.head->next;
     while (curr != list.tail) {
         this -> add(curr -> data);
         curr = curr -> next; 
     }
+    this -> count = list.count;
     this -> itemEqual = list.itemEqual;
     this -> deleteUserData = list.deleteUserData;
-    if (this -> data == nullptr) throw std::bad_alloc();
 }
 
 template <class T>
