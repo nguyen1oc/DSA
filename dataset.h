@@ -57,7 +57,7 @@ class TensorDataset : public Dataset<DType, LType> {
     // this -> data_shape = xt::view(data.shape());
     // this -> label_shape = xt::view(label.shape());
     data_shape = xt::svector<unsigned long> (data.shape().begin(), data.shape().end());
-    label_shape = xt::svector<unsigned long> (label.shape().begin(), data.shape().end());
+    label_shape = xt::svector<unsigned long> (label.shape().begin(), label.shape().end());
   }
 
   int len() {
@@ -67,9 +67,11 @@ class TensorDataset : public Dataset<DType, LType> {
 
   DataLabel<DType, LType> getitem(int index) {
     // TODO implement
-    if (index < 0 || index >= data.shape()[0]) throw std::out_of_range("Index is out of range");
-    auto dataItem = xt::view(data, index);
-    auto labelItem = xt::view(label, index);
+    if (index < 0 || index >= len()) throw std::out_of_range("Index is out of range!");
+    xt::xarray<DType> dataItem = xt::view(data, index);
+    xt::xarray<LType> labelItem = xt::view(label, index);
+    // auto dataItem = xt::view(data, index);
+    // auto labelItem = xt::view(label, index);
     return DataLabel<DType,LType>(dataItem, labelItem); 
   }
 
