@@ -121,10 +121,10 @@ class DataLoader {
       // cout << endl;
       //------------------------------------------------------
 
-      xt::xarray<DType> dataItem = loader->ptr_dataset->getitem(after_shuffle).getData();
+      xt::xarray<DType> dataItem = loader -> ptr_dataset->getitem(after_shuffle).getData();
       xt::view(data_batch, i - front) = dataItem;
 
-      xt::xarray<LType> labelItem = loader->ptr_dataset->getitem(after_shuffle).getLabel();
+      xt::xarray<LType> labelItem = loader -> ptr_dataset->getitem(after_shuffle).getLabel();
       if (label_shape.size() != 0){
         xt::view(label_batch, i - front) = labelItem;
       }
