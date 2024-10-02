@@ -28,7 +28,10 @@ class DataLoader {
     if (ptr_dataset -> len() < batch_size && drop_last == false) totalBatches = 1;
     else totalBatches = (ptr_dataset -> len()) / batch_size;
 
-    if (drop_last == true && ptr_dataset -> len() < batch_size) return;
+    if (drop_last == true && ptr_dataset -> len() < batch_size){
+     totalBatches = 0;
+     return;
+    }
     //temp = totalBatches;
     if (shuffle == true){ 
       xt::random::default_engine_type engine(0);
