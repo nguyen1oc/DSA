@@ -20,21 +20,27 @@ class DataLoader {
   int totalBatches;//tong so batch
   //int temp;
   int current_idx; //vi tri cua tung batch
-  xt::xarray<int> shuffle_time = xt::arange(ptr_dataset -> len());
-  //XArrayList<Batch<DType, LType>> batch;
+  xt::xarray<int> shuffle_array = xt::arange<int>(ptr_dataset -> len());;
  public:
   DataLoader(Dataset<DType, LType>* ptr_dataset, int batch_size,
              bool shuffle = true, bool drop_last = false): ptr_dataset(ptr_dataset), batch_size(batch_size), shuffle(shuffle), drop_last(drop_last), current_idx(0) {
     // TODO implement
     if (ptr_dataset -> len() < batch_size && drop_last == false) totalBatches = 1;
     else totalBatches = (ptr_dataset -> len()) / batch_size;
+
+    if (drop_last == true && ptr_dataset -> len() < batch_size) return;
     //temp = totalBatches;
-    if (shuffle == true) xt::random::shuffle(shuffle_time);
-    if (drop_last == true) return;
-    //batch = XArrayList<Batch<DType, LType>>(nullptr, 0 , totalBatches);
-    //for(i:totalbatch)
-    //xt::array<DType> data
-    //batch.add(Batch<DType, LType>(batch_data, batch_label))
+    if (shuffle == true){ 
+      xt::random::default_engine_type engine(0);
+      xt::random::shuffle(shuffle_array, engine);
+    }
+    //-----------------------------------------------------
+    // cout << "Shuffle Time: ";
+    // for(int i = 0; i < shuffle_array.size(); ++i) {
+    //   cout << shuffle_array(i) << " ";
+    // }
+    //   cout << endl;
+    //------------------------------------------------------
   }
   virtual ~DataLoader(){
     // TODO implement
@@ -80,31 +86,50 @@ class DataLoader {
     unsigned int front = current_idx * loader -> batch_size;
     unsigned int rear = front + loader -> batch_size;
 
+    //ktra drop last, phai batch cuoi hay ko, va co du k
     if (loader -> drop_last == false && current_idx == loader -> totalBatches - 1 && loader -> ptr_dataset->len() % loader -> batch_size != 0 ){
       rear += loader -> ptr_dataset -> len() % loader -> batch_size;
     }
-    //std::cout <<"Front: " << front << ", Rear: " << rear << ", Temp: " << loader->temp << ", totalBatch: "<< loader ->totalBatches<< std::endl;
+    //cout <<"Front: " << front << ", Rear: " << rear << ", Temp: " << loader->temp << ", totalBatch: "<< loader ->totalBatches<< std::endl;
     if (rear > loader -> ptr_dataset -> len()) rear = loader -> ptr_dataset -> len();
 
-    auto data_shape = loader -> ptr_dataset -> get_data_shape();
-    auto label_shape = loader -> ptr_dataset -> get_label_shape();
+    xt::svector<unsigned long> data_shape = loader -> ptr_dataset -> get_data_shape();
     data_shape[0] = rear - front;
-    label_shape[0] = rear - front;
-
+    xt::svector<unsigned long> label_shape = loader -> ptr_dataset -> get_label_shape();;
+    if (label_shape.size() != 0){
+      label_shape[0] = rear - front;
+    }
+    
     xt::xarray<DType> data_batch = xt::xarray<DType>::from_shape(data_shape);
-    xt::xarray<LType> label_batch = xt::xarray<LType>::from_shape(label_shape);
+    xt::xarray<LType> label_batch;
+    if (label_shape.size() != 0){
+      label_batch = xt::xarray<LType>::from_shape(label_shape);
+    } 
 
-    for (unsigned int i = front; i < rear; ++i) {
-        xt::xarray<DType> dataItem = loader->ptr_dataset->getitem(i).getData();
-        xt::xarray<LType> labelItem = loader->ptr_dataset->getitem(i).getLabel();
-        //std::cout << "Batch Index: " << current_idx << ", Front: " << front << ", Rear: " << rear << ", Temp: " << loader->temp << std::endl;
+    //cout<<"Its here!";
+    for (unsigned int i = front; i < rear; ++i){
+      unsigned int after_shuffle = loader->shuffle_array(i);
 
-        xt::view(data_batch, i - front) = dataItem;
+      //------------------------------------------------------
+      // cout << "Shuffle Time: ";
+      // for(int i = 0; i < loader -> shuffle_array.size(); ++i) {
+      //   cout << loader -> shuffle_array(i) << " ";
+      // }
+      // cout << endl;
+      //------------------------------------------------------
+
+      xt::xarray<DType> dataItem = loader->ptr_dataset->getitem(after_shuffle).getData();
+      xt::view(data_batch, i - front) = dataItem;
+
+      xt::xarray<LType> labelItem = loader->ptr_dataset->getitem(after_shuffle).getLabel();
+      if (label_shape.size() != 0){
         xt::view(label_batch, i - front) = labelItem;
+      }
+      //std::cout << "Batch Index: " << current_idx << ", Front: " << front << ", Rear: " << rear << ", Temp: " << loader->temp << std::endl;
     }
     //loader->temp -= 1; // Giảm temp
     return Batch<DType, LType>(data_batch, label_batch);
-}
+  }
 
    private:
     // TODO implement
