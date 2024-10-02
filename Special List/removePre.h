@@ -1,6 +1,6 @@
 E removePre(){
     E deleteN;
-    Assert(curr != head, " No Element");
+    Assert(curr != head, "No element");
     Link<E>* thisN = curr;
     deleteN = thisN -> element;
     curr -> next -> prev = thisN -> prev;
