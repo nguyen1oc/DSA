@@ -68,10 +68,13 @@ class TensorDataset : public Dataset<DType, LType> {
   DataLabel<DType, LType> getitem(int index) {
     // TODO implement
     if (index < 0 || index >= len()) throw std::out_of_range("Index is out of range!");
+    xt::xarray<LType> labelItem;
     xt::xarray<DType> dataItem = xt::view(data, index);
-    xt::xarray<LType> labelItem = xt::view(label, index);
-    // auto dataItem = xt::view(data, index);
-    // auto labelItem = xt::view(label, index);
+    if (label_shape.size() != 0){
+      labelItem = xt::view(label, index);
+    }else{
+      return DataLabel<DType, LType>(dataItem, label);
+    }
     return DataLabel<DType,LType>(dataItem, labelItem); 
   }
 
