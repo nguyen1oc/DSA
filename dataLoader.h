@@ -29,8 +29,8 @@ class DataLoader {
     else totalBatches = (ptr_dataset -> len()) / batch_size;
 
     if (drop_last == true && ptr_dataset -> len() < batch_size){
-     totalBatches = 0;
-     return;
+      totalBatches = 0;
+      return;
     }
     //temp = totalBatches;
     if (shuffle == true){ 
@@ -45,10 +45,12 @@ class DataLoader {
     //   cout << endl;
     //------------------------------------------------------
   }
-  virtual ~DataLoader(){
-    // TODO implement
+  virtual ~DataLoader(){}
 
-  }
+    /////////////////////////////////////////////////////////////////////////
+    // The section for supporting the iteration and for-each to DataLoader //
+    /// START: Section                                                     //
+    /////////////////////////////////////////////////////////////////////////
 
   // TODO implement forech
   class Iterator {
@@ -84,6 +86,22 @@ class DataLoader {
       return current_idx != other.current_idx;
     }
 
+
+  /*OPERATOR*:
+   Requirement:
+   We want the function to return batches that store the number of elements suitable for the batch size.
+   
+   Idea:
+   - Create the start and end points (calculate how to access the correct position based on the specified batch size).
+   - Check some conditions for the end point to ensure it doesn't exceed the range.
+   - When `drop_last == false`, handle the case where the batch includes `len() % batchsize`.
+
+   Create `data_shape` and `label_shape`. Why?
+   When we call it, the function returns something like (10, 28, 28), meaning we have 10 data points, each with a shape of 28x28.
+   We want to change the 10 in the shape to `batchsize`, because we want the batch to return data with `batchsize` elements.
+
+   Finally, use `getItem` to access the values (don't forget to check whether it's shuffled or not).
+  */
     Batch<DType, LType> operator*() const{
     //loader -> temp = loader -> totalBatches;
     unsigned int front = current_idx * loader -> batch_size;
@@ -121,10 +139,10 @@ class DataLoader {
       // cout << endl;
       //------------------------------------------------------
 
-      xt::xarray<DType> dataItem = loader -> ptr_dataset->getitem(after_shuffle).getData();
+      xt::xarray<DType> dataItem = loader->ptr_dataset->getitem(after_shuffle).getData();
       xt::view(data_batch, i - front) = dataItem;
 
-      xt::xarray<LType> labelItem = loader -> ptr_dataset->getitem(after_shuffle).getLabel();
+      xt::xarray<LType> labelItem = loader->ptr_dataset->getitem(after_shuffle).getLabel();
       if (label_shape.size() != 0){
         xt::view(label_batch, i - front) = labelItem;
       }
@@ -149,6 +167,11 @@ class DataLoader {
     // TODO implement
     return Iterator(this, totalBatches); //why? -> for (batch: totalBatches)?
   }
+
+    /////////////////////////////////////////////////////////////////////////
+    // The section for supporting the iteration and for-each to DataLoader //
+    /// END: Section                                                       //
+    /////////////////////////////////////////////////////////////////////////
 };
 
 #endif /* DATALOADER_H */
