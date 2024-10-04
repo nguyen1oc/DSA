@@ -116,7 +116,7 @@ class DataLoader {
 
     xt::svector<unsigned long> data_shape = loader -> ptr_dataset -> get_data_shape();
     data_shape[0] = rear - front;
-    xt::svector<unsigned long> label_shape = loader -> ptr_dataset -> get_label_shape();;
+    xt::svector<unsigned long> label_shape = loader -> ptr_dataset -> get_label_shape();
     if (label_shape.size() != 0){
       label_shape[0] = rear - front;
     }
