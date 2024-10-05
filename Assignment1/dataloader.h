@@ -34,8 +34,8 @@ class DataLoader {
     }
     //temp = totalBatches;
     if (shuffle == true){ 
-      xt::random::default_engine_type engine(0);
-      xt::random::shuffle(shuffle_array, engine);
+      //xt::random::default_engine_type engine(0);
+      xt::random::shuffle(shuffle_array);
     }
     //-----------------------------------------------------
     // cout << "Shuffle Time: ";
