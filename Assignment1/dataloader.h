@@ -32,6 +32,10 @@ class DataLoader {
       totalBatches = 0;
       return;
     }
+    if (drop_last == false && ptr_dataset -> len() < batch_size){
+      totalBatches = 0;
+      return;
+    }
     //temp = totalBatches;
     if (shuffle == true){ 
       //xt::random::default_engine_type engine(0);
