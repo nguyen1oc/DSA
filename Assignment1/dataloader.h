@@ -20,7 +20,7 @@ class DataLoader {
   int totalBatches;//tong so batch
   //int temp;
   int current_idx; //vi tri cua tung batch
-  xt::xarray<int> shuffle_array = xt::arange<int>(ptr_dataset -> len());;
+  xt::xarray<int> shuffle_array = xt::arange<int>(ptr_dataset -> len());
  public:
   DataLoader(Dataset<DType, LType>* ptr_dataset, int batch_size,
              bool shuffle = true, bool drop_last = false): ptr_dataset(ptr_dataset), batch_size(batch_size), shuffle(shuffle), drop_last(drop_last), current_idx(0) {
