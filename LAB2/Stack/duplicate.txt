@@ -1,0 +1,24 @@
+string removeDuplicates(string S) {
+    /*TODO*/
+    stack<char> stk;
+
+    // Traverse the input string
+    for (char ch : S) {
+        // If the stack is not empty and the top element matches the current character, remove the top element
+        if (!stk.empty() && stk.top() == ch) {
+            stk.pop();
+        } else {
+            // Otherwise, add the current character to the stack
+            stk.push(ch);
+        }
+    }
+
+    // Construct the final string from the stack
+    string result;
+    while (!stk.empty()) {
+        result.insert(result.begin(), stk.top());
+        stk.pop();
+    }
+
+    return result;
+}

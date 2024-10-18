@@ -1,0 +1,41 @@
+#include <vector>
+void helper(ListNode*& node) {
+    ListNode* temp = nullptr;
+    while (node) {
+        std::swap(node->left, node->right);
+        temp = node;
+        node = node->left;
+    }
+    if (temp) node = temp;
+}
+
+ListNode* reverse(ListNode* head, int a, int b) {
+    if (a == b || !head) return head;
+
+    ListNode* start = head;
+    ListNode* end = head;
+
+    for (int i = 1; i < a; ++i) start = start->right;
+    for (int i = 1; i < b; ++i) end = end->right;
+
+    ListNode* leftSeg = start->left;
+    ListNode* rightSeg = end->right;
+
+    start->left = nullptr;
+    end->right = nullptr;
+
+    helper(start);
+
+    if (leftSeg) leftSeg->right = start;
+    start->left = leftSeg;
+
+    ListNode* curr = start;
+    while (curr->right) curr = curr->right;
+
+    curr->right = rightSeg;
+    if (rightSeg) rightSeg->left = curr;
+
+    while (start->left) start = start->left;
+
+    return start;
+}

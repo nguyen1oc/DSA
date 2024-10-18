@@ -1,0 +1,93 @@
+template <class T>
+T DLinkedList<T>::removeAt(int index) 
+{
+    if (index < 0 || index >= count) {
+        throw out_of_range("Index out of range");
+    }
+
+    Node* current = head;
+
+    // Xóa nút đầu tiên
+    if (index == 0) {
+        head = current->next;
+        if (head) {
+            head->previous = nullptr; // Cập nhật nút trước của head
+        } else {
+            tail = nullptr; // Nếu danh sách trở nên rỗng, cập nhật tail
+        }
+
+        T data = current->data; // Lưu dữ liệu để trả về
+        delete current; // Giải phóng bộ nhớ
+        count--; // Giảm số lượng phần tử
+        return data; // Trả về dữ liệu đã xóa
+    }
+
+    // Tìm nút cần xóa
+    for (int i = 0; i < index; i++) {
+        current = current->next;
+    }
+
+    Node* previousNode = current->previous; // Nút trước nút hiện tại
+    Node* nextNode = current->next; // Nút tiếp theo của nút hiện tại
+
+    // Kết nối lại các nút
+    previousNode->next = nextNode;
+    
+    if (nextNode) {
+        nextNode->previous = previousNode; // Cập nhật nút trước của nút tiếp theo
+    } else {
+        tail = previousNode; // Cập nhật tail nếu nút hiện tại là cuối danh sách
+    }
+
+    T data = current->data; // Lưu dữ liệu để trả về
+    delete current; // Giải phóng bộ nhớ
+    count--; // Giảm số lượng phần tử
+    return data; // Trả về dữ liệu đã xóa
+}
+
+template <class T>
+bool DLinkedList<T>::removeItem(const T& item) {
+    Node* current = head;
+
+    // Tìm nút chứa item
+    while (current) {
+        if (current->data == item) {
+            Node* previousNode = current->previous; // Nút trước
+            Node* nextNode = current->next; // Nút tiếp theo
+
+            // Kết nối lại các nút
+            if (previousNode) {
+                previousNode->next = nextNode;
+            } else {
+                head = nextNode; // Nếu nút hiện tại là đầu danh sách
+            }
+
+            if (nextNode) {
+                nextNode->previous = previousNode;
+            } else {
+                tail = previousNode; // Nếu nút hiện tại là cuối danh sách
+            }
+
+            delete current; // Giải phóng bộ nhớ
+            count--; // Giảm số lượng phần tử
+            return true; // Trả về true khi đã xóa
+        }
+        current = current->next; // Di chuyển đến nút tiếp theo
+    }
+    return false; // Trả về false nếu không tìm thấy item
+}
+
+template <class T>
+void DLinkedList<T>::clear() {
+    Node* current = head;
+
+    // Xóa từng nút trong danh sách
+    while (current) {
+        Node* nextNode = current->next; // Lưu nút tiếp theo
+        delete current; // Giải phóng bộ nhớ
+        current = nextNode; // Di chuyển đến nút tiếp theo
+    }
+    
+    head = tail = nullptr; // Đặt lại head và tail
+    count = 0; // Đặt số lượng phần tử về 0
+}

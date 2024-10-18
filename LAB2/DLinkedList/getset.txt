@@ -1,0 +1,67 @@
+template<class T>
+T DLinkedList<T>::get(int index) {
+    /* Trả về dữ liệu của phần tử tại chỉ số đã cho trong danh sách. */
+    Node* current = head;
+
+    // Di chuyển đến nút tại chỉ số mong muốn
+    for (int i = 0; i < index; i++) {
+        current = current->next;
+    }
+    
+    return current->data; // Trả về dữ liệu của nút
+}
+
+template <class T>
+void DLinkedList<T>::set(int index, const T& e) {
+    /* Gán giá trị mới cho phần tử tại chỉ số đã cho trong danh sách. */
+    Node* current = head;
+
+    // Di chuyển đến nút tại chỉ số mong muốn
+    for (int i = 0; i < index; i++) {
+        current = current->next;
+    }
+
+    current->data = e; // Cập nhật dữ liệu
+    // Các dòng dưới không cần thiết vì không có con trỏ nào để xóa
+    // current = nullptr; 
+    // delete current; 
+}
+
+template<class T>
+bool DLinkedList<T>::empty() {
+    /* Kiểm tra xem danh sách có rỗng hay không. */
+    return count == 0; // Trả về true nếu danh sách rỗng, ngược lại trả về false.
+}
+
+template<class T>
+int DLinkedList<T>::indexOf(const T& item) {
+    /* Trả về chỉ số đầu tiên mà phần tử xuất hiện trong danh sách, nếu không có trả về -1. */
+    int index = 0;
+    Node* current = head;
+
+    // Tìm kiếm trong danh sách
+    while (current != NULL) {
+        if (current->data == item) {
+            return index; // Trả về chỉ số nếu tìm thấy
+        }
+        index++;
+        current = current->next;
+    }
+    
+    return -1; // Nếu không tìm thấy
+}
+
+template<class T>
+bool DLinkedList<T>::contains(const T& item) {
+    /* Kiểm tra xem phần tử có xuất hiện trong danh sách hay không. */
+    Node* current = head;
+    
+    while (current != NULL) {
+        if (current->data == item) {
+            return true; // Trả về true nếu tìm thấy
+        }
+        current = current->next;
+    }
+    
+    return false; // Nếu không tìm thấy
+}

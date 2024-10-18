@@ -1,0 +1,26 @@
+
+bool isValidParentheses(std::string s) {
+    std::stack<char> stk;  // Stack to keep track of opening brackets
+
+    // Iterate through each character in the string
+    for (char ch : s) {
+        // Check if the character is an opening bracket
+        if (ch == '(' || ch == '{' || ch == '[') {
+            stk.push(ch);  // Push opening bracket onto the stack
+        } 
+        // Check if the character is a closing bracket
+        else if (ch == ')' || ch == '}' || ch == ']') {
+            // If the stack is empty or the top of the stack does not match the closing bracket, return false
+            if (stk.empty() || 
+                (ch == ')' && stk.top() != '(') || 
+                (ch == '}' && stk.top() != '{') || 
+                (ch == ']' && stk.top() != '[')) {
+                return false;
+            }
+            stk.pop();  // Pop the matching opening bracket from the stack
+        }
+    }
+
+    // If the stack is empty, all brackets were matched; otherwise, return false
+    return stk.empty();
+}

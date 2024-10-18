@@ -1,0 +1,16 @@
+vector<int> stock_span(const vector<int>& prices) {
+    int n = prices.size();
+    vector<int> span(n);
+    stack<int> s;
+
+    for (int i = 0; i < n; ++i) {
+        while (!s.empty() && prices[s.top()] <= prices[i]) {
+            s.pop();
+        }
+        
+        span[i] = (s.empty()) ? (i + 1) : (i - s.top());
+        s.push(i);
+    }
+
+    return span;
+}

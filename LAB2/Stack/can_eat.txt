@@ -1,0 +1,32 @@
+bool canEatFood(int maze[5][5], int fx, int fy) {
+    stack<Node> s;
+    bool visited[5][5] = {false};
+
+    s.push(Node(0, 0));
+    visited[0][0] = true;
+
+    int directions[4][2] = {{-1, 0}, {0, -1}, {1, 0}, {0, 1}};
+
+    while (!s.empty()) {
+        Node current = s.top();
+        s.pop();
+
+        if (current.x == fx && current.y == fy) {
+            return true;
+        }
+
+        for (; current.dir < 4; current.dir++) {
+            int newX = current.x + directions[current.dir][0];
+            int newY = current.y + directions[current.dir][1];
+
+            if (newX >= 0 && newX < 5 && newY >= 0 && newY < 5 && 
+                maze[newX][newY] == 1 && !visited[newX][newY]) {
+                
+                visited[newX][newY] = true;
+                s.push(Node(newX, newY));
+            }
+        }
+    }
+
+    return false;
+}

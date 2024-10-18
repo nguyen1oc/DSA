@@ -1,0 +1,22 @@
+template <class T>
+void SLinkedList<T>::bubbleSort()
+{
+    if (head == nullptr) return;
+    
+    bool hasSwapped;
+    do {
+        hasSwapped = false;
+        Node* currentNode = head;
+        
+        while (currentNode->next != nullptr) {
+            if (currentNode->data > currentNode->next->data) {
+                swap(currentNode->data, currentNode->next->data);
+                hasSwapped = true;
+            }
+            currentNode = currentNode->next;
+        }
+        
+        if (hasSwapped) printList();
+    } 
+    while (hasSwapped);
+}

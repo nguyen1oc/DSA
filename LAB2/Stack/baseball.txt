@@ -1,0 +1,43 @@
+int baseballScore(std::string ops) {
+    stack<int> record;
+
+    for (char op : ops) {
+        if (isdigit(op)) {
+            // Convert the character to an integer and push to the stack
+            record.push(op - '0');
+        } 
+        else if (op == 'C') {
+            // Invalidate the last score by popping the top of the stack
+            if (!record.empty()) {
+                record.pop();
+            }
+        } 
+        else if (op == 'D') {
+            // Double the last score and push it to the stack
+            if (!record.empty()) {
+                record.push(2 * record.top());
+            }
+        } 
+        else if (op == '+') {
+            // Sum the last two scores
+            if (record.size() >= 2) {
+                int top = record.top();
+                record.pop();
+                int secondTop = record.top();
+                record.push(top); // Put the top back
+
+                // Push the sum of the last two scores
+                record.push(top + secondTop);
+            }
+        }
+    }
+
+    // Sum up all the scores in the stack
+    int total = 0;
+    while (!record.empty()) {
+        total += record.top();
+        record.pop();
+    }
+
+    return total;
+}

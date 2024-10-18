@@ -1,0 +1,66 @@
+template <class T>
+void DLinkedList<T>::add(const T& e) {
+    /* Thêm một phần tử vào cuối danh sách. */
+    Node* newNode = new Node();
+    newNode->data = e;
+
+    // Nếu danh sách rỗng, cập nhật cả head và tail
+    if (!tail) {
+        tail = head = newNode;
+        count++;
+        return;
+    }
+
+    // Thêm nút mới vào cuối danh sách
+    tail->next = newNode;
+    newNode->previous = tail;
+    tail = newNode;
+    count++;
+}
+
+template<class T>
+void DLinkedList<T>::add(int index, const T& e) {
+    /* Thêm một phần tử vào danh sách tại chỉ số đã cho. */ 
+    if (index < 0 || index > count)
+        return; // Kiểm tra xem chỉ số có hợp lệ không
+
+    if (index == 0) {
+        // Thêm vào đầu danh sách
+        Node* newNode = new Node(e);  
+        newNode->next = head;
+
+        if (head != NULL)
+            head->previous = newNode;
+        else 
+            tail = newNode; // Nếu danh sách rỗng, cập nhật tail
+
+        head = newNode;
+        count++;
+        return;
+    } else if (index == count) {
+        // Nếu chỉ số bằng kích thước hiện tại, thêm vào cuối
+        add(e);
+        return;
+    } else {
+        // Thêm vào vị trí giữa danh sách
+        Node* newNode = new Node(e);
+        Node* current = head;
+        
+        for (int i = 0; i < index; i++)
+            current = current->next;
+
+        newNode->next = current;
+        newNode->previous = current->previous;
+        current->previous->next = newNode;
+        current->previous = newNode;
+
+        count++;
+        return;
+    }
+}
+
+template<class T>
+int DLinkedList<T>::size() {
+    /* Trả về chiều dài (kích thước) của danh sách */ 
+    return count;
+}
