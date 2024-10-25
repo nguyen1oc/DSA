@@ -1,0 +1,8 @@
+template <typename E>
+int height(BNode<E>* root){
+if (root){
+int lr = height(root -> left());
+int rr = height(root -> right());
+return 1 + max(lr, rr);
+}return 0;
+}

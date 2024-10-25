@@ -1,0 +1,32 @@
+#include <queue>
+
+template <typename E>
+bool isComplete(BNode<E> * root) {
+    if (!root) return false;
+
+    std::queue<BNode<E>*> q;
+    q.push(root);
+    
+    bool foundNullChild = false;
+
+    while (!q.empty()) {
+        BNode<E>* current = q.front();
+        q.pop();
+
+        if (current->left()) {
+            if (foundNullChild) return false;
+            q.push(current->left());
+        } else {
+            foundNullChild = true;
+        }
+
+        if (current->right()) {
+            if (foundNullChild) return false;
+            q.push(current->right());
+        } else {
+            foundNullChild = true;
+        }
+    }
+
+    return true;
+}

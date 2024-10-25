@@ -1,0 +1,24 @@
+template <typename E>
+bool isBSTUtil(BNode<E> * root, E minValue, E maxValue) {
+    if (root == nullptr) {
+        return true; 
+    }
+
+    if (root->element() < minValue || root->element() > maxValue) {
+        return false; 
+    }
+
+   
+    return isBSTUtil(root->left(), minValue, root->element()) &&
+           isBSTUtil(root->right(), root->element(), maxValue);
+}
+
+template <typename E>
+bool isBST(BNode<E> * root) {
+    if (root == nullptr) {
+        return true;  
+    }
+
+   
+    return isBSTUtil(root, std::numeric_limits<E>::min(), std::numeric_limits<E>::max());
+}

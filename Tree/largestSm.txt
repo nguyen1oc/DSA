@@ -1,0 +1,15 @@
+template <typename E>
+void LargestSmaller(BNode<E>* root, E key) {
+   E largestSmallerKey;
+   bool found = false;
+   while (root){
+       if (root -> element() < key){
+           largestSmallerKey = root -> element();
+           found = true;
+           root = root -> right();
+       }else {
+           root = root -> left();
+       }
+   }
+   if (found) cout << largestSmallerKey;
+}
