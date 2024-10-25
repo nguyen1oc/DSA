@@ -276,7 +276,7 @@ int Heap<T>::size() {
 template <class T>
 void Heap<T>::heapify(T array[], int size) {
   // YOUR CODE IS HERE
-  for (int i = 0; i < size; i ++) push(array[i]);
+  for (int i = 0; i < size; i++) push(array[i]);
   for (int i = (count / 2) - 1; i >=0; i--) reheapDown(i);
 }
 
