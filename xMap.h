@@ -300,7 +300,7 @@ V xMap<K, V>::remove(K key, void (*deleteKeyInMap)(K)) {
   for (auto list_I : list_of_index){
       if (keyEQ(list_I -> key, key)){
           V returnVal = list_I -> value;
-          if (deleteKeyInMap) deleteKeyInMap(list_I -> key);
+          if (deleteKeyInMap != nullptr) deleteKeyInMap(list_I -> key);
           list_of_index.removeItem(list_I, deleteEntry);
           count--;
           return returnVal;
@@ -321,8 +321,8 @@ bool xMap<K, V>::remove(K key, V value, void (*deleteKeyInMap)(K),
   for (auto list_I : list_of_index){
           if (valueEQ(list_I -> value, value)){
             V returnVal = list_I -> value;
-            if (deleteKeyInMap) deleteKeyInMap(list_I -> key);
-            if (deleteValueInMap) deleteValueInMap(list_I -> value);
+            if (deleteKeyInMap != nullptr) deleteKeyInMap(list_I -> key);
+            if (deleteValueInMap != nullptr) deleteValueInMap(list_I -> value);
             list_of_index.removeItem(list_I, deleteEntry);
             count--;
             return true;
