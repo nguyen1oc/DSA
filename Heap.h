@@ -345,16 +345,16 @@ void Heap<T>::swap(int a, int b) {
 template <class T>
 void Heap<T>::reheapUp(int position) {
   // YOUR CODE IS HERE
-  int parent = (position - 1) / 2;  
-    T temp = elements[position];  
+  int first_node = (position - 1) / 2;  
+    T current = elements[position];  
 
-    while (position > 0 && aLTb(temp, elements[parent])) {
-        elements[position] = elements[parent];
-        position = parent;  
-        parent = (position - 1) / 2;  
+    while (position > 0 && aLTb(current, elements[first_node])) {
+        elements[position] = elements[first_node];
+        position = first_node;  
+        first_node = (position - 1) / 2;  
     }
 
-    elements[position] = temp;
+    elements[position] = current;
 }
 
 template <class T>
