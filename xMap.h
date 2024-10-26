@@ -205,8 +205,7 @@ xMap<K, V>::xMap(int (*hashCode)(K&, int), float loadFactor,
   this -> deleteValues = deleteValues;
   this -> keyEqual = keyEqual;
   this -> deleteKeys = deleteKeys;
-  this -> table = new  DLinkedList<Entry*>[10];
-  this -> list_clashes = DLinkedList<int>();
+  this -> table = new  DLinkedList<Entry*>[capacity];
   // for (int i = 0; i < capacity; i++){
   //   this -> list_clashes.add(0);
   // }
@@ -216,8 +215,6 @@ template <class K, class V>
 xMap<K, V>::xMap(const xMap<K, V>& map) {
   // TODO YOUR CODE IS HERE
   copyMapFrom(map);
-  deleteValues = nullptr;
-  deleteKeys = nullptr;
 }
 
 template <class K, class V>
@@ -226,8 +223,6 @@ xMap<K, V>& xMap<K, V>::operator=(const xMap<K, V>& map) {
   if (this != &map){
         removeInternalData();
         copyMapFrom(map);
-        deleteValues = nullptr;
-        deleteKeys = nullptr;
   }
   return *this;
 }
@@ -270,7 +265,6 @@ V xMap<K, V>::put(K key, V value) {
   //   std::cout << clash << " ";
   // }
   // std::cout << std::endl;
-
   return retValue;
 }
 
@@ -375,8 +369,8 @@ void xMap<K, V>::clear() {
   // TODO YOUR CODE IS HERE
   removeInternalData();
   this -> count = 0;
-  this -> table = new DLinkedList<Entry*>[10];
   this -> capacity = 10;
+  this -> table = new DLinkedList<Entry*>[capacity];
 }
 
 template <class K, class V>
@@ -409,6 +403,8 @@ DLinkedList<V> xMap<K, V>::values() {
 template <class K, class V>
 DLinkedList<int> xMap<K, V>::clashes() {
   // TODO YOUR CODE IS HERE
+  //this -> list_clashes = DLinkedList<int>();
+  list_clashes.clear();
   for (int idx = 0; idx < capacity; idx++){
       DLinkedList<Entry*>& list_of_index = this -> table[idx];
       auto count_clashes = 0;
@@ -421,7 +417,7 @@ DLinkedList<int> xMap<K, V>::clashes() {
 }
 
 template <class K, class V>
-string xMap<K, V>::toString(string (*key2str)(K&), string (*value2str)(V&)) {
+string xMap<K, V>::toString(string (*key2str)(K&), string (*value2str)(V&)) { //constaint
   stringstream os;
   string mark(50, '=');
   os << mark << endl;
@@ -469,7 +465,7 @@ string xMap<K, V>::toString(string (*key2str)(K&), string (*value2str)(V&)) {
  */
 template <class K, class V>
 void xMap<K, V>::moveEntries(DLinkedList<Entry*>* oldTable, int oldCapacity,
-                             DLinkedList<Entry*>* newTable, int newCapacity) {
+                             DLinkedList<Entry*>* newTable, int newCapacity) { //constaint
   for (int old_index = 0; old_index < oldCapacity; old_index++) {
     DLinkedList<Entry*>& oldList = oldTable[old_index];
     for (auto oldEntry : oldList) {
@@ -487,7 +483,7 @@ void xMap<K, V>::moveEntries(DLinkedList<Entry*>* oldTable, int oldCapacity,
  * "loadFactor*capacity"
  */
 template <class K, class V>
-void xMap<K, V>::ensureLoadFactor(int current_size) {
+void xMap<K, V>::ensureLoadFactor(int current_size) { //constaint
   int maxSize = (int)(loadFactor*capacity);
    
     //cout << "ensureLoadFactor: count = " << count << "; maxSize = " << maxSize << endl;
@@ -507,7 +503,7 @@ void xMap<K, V>::ensureLoadFactor(int current_size) {
  *      3. free the old table.
  */
 template <class K, class V>
-void xMap<K, V>::rehash(int newCapacity) {
+void xMap<K, V>::rehash(int newCapacity) { //constaint
   DLinkedList<Entry*>* pOldMap = this->table;
   int oldCapacity = capacity;
 
@@ -535,7 +531,7 @@ void xMap<K, V>::rehash(int newCapacity) {
  *      3. Remove table
  */
 template <class K, class V>
-void xMap<K, V>::removeInternalData() {
+void xMap<K, V>::removeInternalData() { //constaint
   // Remove user's data
   if (deleteKeys != 0) deleteKeys(this);
   if (deleteValues != 0) deleteValues(this);
@@ -560,8 +556,7 @@ void xMap<K, V>::removeInternalData() {
  */
 
 template <class K, class V>
-void xMap<K, V>::copyMapFrom(const xMap<K, V>& map) {
-  //! removeInternalData(); ???
+void xMap<K, V>::copyMapFrom(const xMap<K, V>& map) { //constaint
 
   this->capacity = map.capacity;
   this->count = 0;
@@ -572,6 +567,9 @@ void xMap<K, V>::copyMapFrom(const xMap<K, V>& map) {
 
   this->valueEqual = valueEqual;
   this->keyEqual = keyEqual;
+
+  this -> deleteKeys = nullptr;
+  this -> deleteValues = nullptr;
   // SHOULD NOT COPY: deleteKeys, deleteValues => delete ONLY TIME in map if
   // needed
 
