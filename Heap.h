@@ -178,7 +178,7 @@ Heap<T>::Heap(int (*comparator)(T&, T&), void (*deleteUserData)(Heap<T>*)) {
 template <class T>
 Heap<T>::Heap(const Heap<T>& heap) {
   // YOUR CODE IS HERE
-  copyFrom(heap);
+    copyFrom(heap);
 }
 
 template <class T>
@@ -391,6 +391,7 @@ void Heap<T>::removeInternalData() {
   if (this->deleteUserData != 0)
     deleteUserData(this);  // clear users's data if they want
   delete[] elements;
+   elements = nullptr;
 }
 
 template <class T>
@@ -399,7 +400,7 @@ void Heap<T>::copyFrom(const Heap<T>& heap) {
   count = heap.count;
   elements = new T[capacity];
   this->comparator = heap.comparator;
-  this->deleteUserData = heap.deleteUserData;
+  this->deleteUserData = nullptr;
 
   // Copy items from heap:
   for (int idx = 0; idx < count; idx++) {
