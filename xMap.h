@@ -562,11 +562,11 @@ void xMap<K, V>::copyMapFrom(const xMap<K, V>& map) { //constaint
   this->count = 0;
   this->table = new DLinkedList<Entry*>[capacity];
 
-  this->hashCode = hashCode;
-  this->loadFactor = loadFactor;
+  this->hashCode = map.hashCode;
+  this->loadFactor = map.loadFactor;
 
-  this->valueEqual = valueEqual;
-  this->keyEqual = keyEqual;
+  this->valueEqual = map.valueEqual;
+  this->keyEqual = map.keyEqual;
 
   this -> deleteKeys = nullptr;
   this -> deleteValues = nullptr;
