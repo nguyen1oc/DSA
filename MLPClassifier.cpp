@@ -173,7 +173,7 @@ void MLPClassifier::backward(){
     //YOUR CODE IS HERE
     double_tensor dY = m_pLossLayer -> backward();
     for (auto it = m_layers.bbegin(); it != m_layers.bend(); ++it) {
-        dY = (*it)->backward(dY);
+        dY = (*it) -> backward(dY);
     }
 }
 //protected: for the training mode: end
