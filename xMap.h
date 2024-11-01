@@ -205,7 +205,7 @@ xMap<K, V>::xMap(int (*hashCode)(K&, int), float loadFactor,
   this -> deleteValues = deleteValues;
   this -> keyEqual = keyEqual;
   this -> deleteKeys = deleteKeys;
-  this -> table = new  DLinkedList<Entry*>[capacity];
+  this -> table = new  DLinkedList<Entry*>[10];
   // for (int i = 0; i < capacity; i++){
   //   this -> list_clashes.add(0);
   // }
@@ -288,6 +288,7 @@ V& xMap<K, V>::get(K key) {
 template <class K, class V>
 V xMap<K, V>::remove(K key, void (*deleteKeyInMap)(K)) {
   int index = hashCode(key, capacity);
+ 
   // TODO YOUR CODE IS HERE
   DLinkedList<Entry*> &list_of_index = this -> table[index];
   //cout<<"Count: "<< count << endl;
@@ -311,9 +312,9 @@ bool xMap<K, V>::remove(K key, V value, void (*deleteKeyInMap)(K),
                         void (*deleteValueInMap)(V)) {
   int index = hashCode(key, capacity);
   // TODO YOUR CODE IS HERE
-  DLinkedList<Entry*> &list_of_index = this -> table[index];
-  for (auto list_I : list_of_index){
-          if (valueEQ(list_I -> value, value)){
+    DLinkedList<Entry*> &list_of_index = this -> table[index];
+    for (auto list_I : list_of_index){
+          if (valueEQ(list_I -> value, value) && keyEQ(list_I -> key, key)){
             V returnVal = list_I -> value;
             if (deleteKeyInMap != nullptr) deleteKeyInMap(list_I -> key);
             if (deleteValueInMap != nullptr) deleteValueInMap(list_I -> value);
@@ -323,9 +324,7 @@ bool xMap<K, V>::remove(K key, V value, void (*deleteKeyInMap)(K),
           }
   }
   // key: not found
-  stringstream os;
-  os << "key (" << key << ") is not found";
-  throw KeyNotFound(os.str());
+  return false;
 }
 
 template <class K, class V>
@@ -558,9 +557,9 @@ void xMap<K, V>::removeInternalData() { //constaint
 template <class K, class V>
 void xMap<K, V>::copyMapFrom(const xMap<K, V>& map) { //constaint
 
-  this->capacity = map.capacity;
+  this->capacity = 10;
   this->count = 0;
-  this->table = new DLinkedList<Entry*>[capacity];
+  this->table = new DLinkedList<Entry*>[map.capacity];
 
   this->hashCode = map.hashCode;
   this->loadFactor = map.loadFactor;
