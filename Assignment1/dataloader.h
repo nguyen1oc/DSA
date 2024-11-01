@@ -20,21 +20,20 @@ class DataLoader {
   int totalBatches;//tong so batch
   //int temp;
   int current_idx; //vi tri cua tung batch
-  xt::xarray<int> shuffle_array = xt::arange<int>(ptr_dataset -> len());
+  int m_seed;
+  xt::xarray<int> shuffle_array = xt::arange<int>(ptr_dataset -> len());;
  public:
   DataLoader(Dataset<DType, LType>* ptr_dataset, int batch_size,
-             bool shuffle = true, bool drop_last = false): ptr_dataset(ptr_dataset), batch_size(batch_size), shuffle(shuffle), drop_last(drop_last), current_idx(0) {
+             bool shuffle = true, bool drop_last = false, int seed = -1): ptr_dataset(ptr_dataset), batch_size(batch_size), shuffle(shuffle), drop_last(drop_last), current_idx(0), m_seed(seed) {
     // TODO implement
-    if (ptr_dataset -> len() < batch_size && drop_last == false) totalBatches = 1;
-    else totalBatches = (ptr_dataset -> len()) / batch_size;
-
     if (ptr_dataset -> len() < batch_size){
       totalBatches = 0;
       return;
     }
+    totalBatches = (ptr_dataset -> len()) / batch_size;
     //temp = totalBatches;
     if (shuffle == true){ 
-      //xt::random::default_engine_type engine(0);
+      if (m_seed >= 0) xt::random::seed(m_seed);
       xt::random::shuffle(shuffle_array);
     }
     //-----------------------------------------------------
