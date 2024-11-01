@@ -1,0 +1,24 @@
+V remove(int key) {
+    int index = hashFunction(key, capacity);
+    Entry* current = this->table[index];
+    Entry* previous = nullptr;
+    while (current) {
+        if (current->key == key) {
+            V val = current->value;
+            if (previous == nullptr) {
+                this->table[index] = current->next;
+            } else {
+                previous->next = current->next;
+            }
+
+            count--; 
+            delete current; 
+            return val; 
+        }
+        previous = current; 
+        current = current->next; 
+    }
+
+    // If the key doesn't exist, throw an exception.
+    throw std::out_of_range("Key not found");
+}

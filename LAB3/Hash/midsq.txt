@@ -1,0 +1,25 @@
+#include <string>
+
+long int midSquare(long int seed) {
+    long int squared = seed * seed;
+    squared /= 100;
+    return squared % 10000;
+}
+
+long int moduloDivision(long int seed, long int mod) {
+    return seed % mod;
+}
+
+long int digitExtraction(long int seed, int* extractDigits, int size) {
+    std::string seedStr = std::to_string(seed);
+    std::string extractedDigits;
+    
+    for (int i = 0; i < size; i++) {
+        int index = extractDigits[i];
+        if (index < static_cast<int>(seedStr.size())) {
+            extractedDigits += seedStr[index];
+        }
+    }
+    
+    return extractedDigits.empty() ? 0 : std::stol(extractedDigits);
+}

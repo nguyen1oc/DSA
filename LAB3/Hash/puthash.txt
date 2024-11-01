@@ -1,0 +1,62 @@
+void put(int key, int value) {
+    int index = hashFunction(key, capacity);
+    Entry* current = this->table[index];
+    
+    while (current) {
+        if (current->key == key) {
+            current->value = value;
+            return;
+        }
+        current = current->next;
+    }
+
+    Entry* newEntry = new Entry{key, value, this->table[index]};
+    this->table[index] = newEntry;
+    
+    count++;
+    ensureLoadFactor(count);
+}
+
+
+void ensureLoadFactor(int current_size) {
+    //TODO: Calculate the maximum allowed size based on the load factor (0.75 * capacity)
+    int maxi = 0.75 * capacity;
+    //TODO: If the current size exceeds or equals the max allowed size, trigger rehashing
+    if (current_size >= maxi){
+        int newCap = capacity * 1.5;
+        rehash(newCap);
+    }
+    //TODO: Calculate the new capacity (1.5 times the old capacity)
+
+    //TODO: Call the rehash function with the new capacity
+}
+
+void rehash(int newCapacity) {
+    Entry** oldTable = this->table;
+    int oldCapacity = this->capacity;
+
+    this->capacity = newCapacity;
+    this->table = new Entry*[newCapacity];
+    for (int i = 0; i< oldCapacity;i++){
+        this->table[i] = 0;
+    }
+    count = 0;
+    for (int i = 0; i < oldCapacity; ++i) {
+        Entry* current = oldTable[i];
+        while (current) {
+            put(current->key, current->value);
+            current = current->next;
+        }
+    }
+
+    for (int i = 0; i < oldCapacity; ++i) {
+        Entry* current = oldTable[i];
+        while (current) {
+            Entry* temp = current;
+            current = current->next;
+            delete temp;
+        }
+    }
+
+    delete[] oldTable;
+}

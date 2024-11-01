@@ -1,0 +1,34 @@
+
+int pairMatching(vector<int>& nums, int target) {
+    unordered_map<int, int> numCount; // Map to store the count of each number
+    int pairCount = 0; // To count the number of pairs
+
+    // Count occurrences of each number
+    for (int num : nums) {
+        numCount[num]++;
+    }
+
+    // Find pairs
+    for (int num : nums) {
+        int complement = target - num;
+
+        // Check if a valid complement exists in the map
+        if (numCount[num] > 0 && numCount[complement] > 0) {
+            // If num and complement are the same, ensure at least two are available
+            if (num == complement) {
+                pairCount += numCount[num] / 2; // Can form pairs among themselves
+                numCount[num] = 0; // All are paired
+            } else {
+                // Minimum of counts for both numbers will give the number of pairs
+                int pairs = min(numCount[num], numCount[complement]);
+                pairCount += pairs;
+
+                // Decrease the count in the map
+                numCount[num] -= pairs;
+                numCount[complement] -= pairs;
+            }
+        }
+    }
+
+    return pairCount; // Return the total count of pairs found
+}

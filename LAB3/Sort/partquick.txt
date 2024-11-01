@@ -1,0 +1,27 @@
+static T* Partition(T* start, T* end) {
+    const T pivot = *start;
+    T* i = start;
+    T* j = end;
+
+    do {
+        do { i++; } while (*i < pivot);
+        do { j--; } while (*j > pivot);
+
+        if (i < j) {
+            swap(*i, *j);
+        }
+    } while (i < j);
+
+    swap(*start, *j);
+    return j;
+}
+
+static void QuickSort(T* start, T* end) 
+{
+    if (start == end) return;
+    T* pivotPos = Partition(start,end);
+    cout << (pivotPos - start) << " ";
+    
+    QuickSort(start,pivotPos);
+    QuickSort(pivotPos + 1,end);
+}
