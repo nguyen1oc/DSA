@@ -6,38 +6,37 @@
  */
 
 /*
- * File:   Sigmoid.cpp
+ * File:   Tanh.cpp
  * Author: ltsach
  *
- * Created on August 25, 2024, 2:45 PM
+ * Created on September 1, 2024, 7:03 PM
  */
 
-#include "layer/Sigmoid.h"
+#include "layer/Tanh.h"
 
 #include "ann/functions.h"
 #include "sformat/fmt_lib.h"
 
-Sigmoid::Sigmoid(string name) {
+Tanh::Tanh(string name) {
   if (trim(name).size() != 0)
     m_sName = name;
   else
-    m_sName = "Sigmoid_" + to_string(++m_unLayer_idx);
+    m_sName = "Tanh_" + to_string(++m_unLayer_idx);
 }
 
-Sigmoid::Sigmoid(const Sigmoid& orig) {
-  m_sName = "Sigmoid_" + to_string(++m_unLayer_idx);
+Tanh::Tanh(const Tanh& orig) { m_sName = "Tanh_" + to_string(++m_unLayer_idx); }
+
+Tanh::~Tanh() {}
+
+xt::xarray<double>Tanh::forward(xt::xarray<double> X){
+    m_aCached_Y = xt::tanh(X);
+    return m_aCached_Y;
+}
+xt::xarray<double>Tanh::backward(xt::xarray<double> DY){
+    return DY * (1 - m_aCached_Y * m_aCached_Y);
 }
 
-Sigmoid::~Sigmoid() {}
-xt::xarray<double>Sigmoid::forward(xt::xarray<double> X){
-  m_aCached_Y = 1.0/(1.0 + xt::exp(-X));
-  return m_aCached_Y;
-}
-xt::xarray<double>Sigmoid::backward(xt::xarray<double> DY){
-  return DY * m_aCached_Y * (1 - m_aCached_Y);
-}
-
-string Sigmoid::get_desc() {
-  string desc = fmt::format("{:<10s}, {:<15s}:", "Sigmoid", this->getname());
+string Tanh::get_desc() {
+  string desc = fmt::format("{:<10s}, {:<15s}:", "Tanh", this->getname());
   return desc;
 }
