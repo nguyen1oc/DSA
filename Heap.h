@@ -264,7 +264,8 @@ void Heap<T>::remove(T item, void (*removeItemData)(T)) {
 template <class T>
 bool Heap<T>::contains(T item) {
   // YOUR CODE IS HERE
-  return getItem(item) != -1;
+  if (getItem(item) != -1) return true;
+  return false;
 }
 
 template <class T>
@@ -381,9 +382,14 @@ void Heap<T>::reheapDown(int position) {
 template <class T>
 int Heap<T>::getItem(T item) {
   // YOUR CODE IS HERE
-  for (int i = 0; i < count; i++){
-    if (elements[i] == item) return i;
-  } return -1;
+   for (int i = 0; i < count; i++) {
+    if constexpr (is_pointer<T>::value) {
+      if (*elements[i] == *item) return i;
+    } else {
+      if (elements[i] == item) return i;
+    }
+  }
+  return -1;
 }
 
 template <class T>
