@@ -36,25 +36,34 @@ void IModel::fit(DataLoader<double, double>* pTrainLoader,
             //(0) Set gradient buffer to zeros
             //YOUR CODE IS HERE
             m_pOptimizer -> zero_grad();
-            
+            //cout<<"afer grad"<<endl;
             //(1) FORWARD-Pass
             //YOUR CODE IS HERE
-            double_tensor Y = this -> forward(X);
-            
+            //cout<<"-----------------------Forward---------------------------\n";
+            double_tensor Y = forward(X);
+            //cout<<"afterforwad"<<endl;
             //(2) BACKWARD-Pass
             //YOUR CODE IS HERE
             double batch_loss = m_pLossLayer -> forward(Y, t);
+            //double batch_loss = batch_1loss(0);
+            //cout<<"batch_loss: "<<batch_loss<<endl;
+            //cout<<"afterforwad yt"<<endl;
+            //cout<<"-----------------------Backward---------------------------\n";
             this -> backward();
             //(3) UPDATE learnable parameters
             //YOUR CODE IS HERE
+            //cout<<"backwrad done"<<endl;
             m_pOptimizer -> step();
+            //cout<<"step"<<endl;
             //Record the performance for each batch
             ulong_tensor y_true = xt::argmax(t, 1);
+            //cout<<"guess ou cant"<<endl;
             ulong_tensor y_pred = xt::argmax(Y, 1);
-            m_pMetricLayer->accumulate(y_true, y_pred);
-            
+            m_pMetricLayer -> accumulate(y_true, y_pred);
+            //cout<<"bi gi nua z tr"<<endl;
             on_end_step(batch_loss);
         }//for-each batch: end
+        //cout<<"chay duoc chua";
         on_end_epoch();
     }//for-epoch: end
     on_end_training();
