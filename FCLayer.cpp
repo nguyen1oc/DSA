@@ -144,21 +144,60 @@ FCLayer::~FCLayer() {
 
 xt::xarray<double> FCLayer::forward(xt::xarray<double> X) {
     //YOUR CODE IS HERE
-    if (m_bUse_Bias) m_aCached_X = X;
-    xt::xarray<double> Y = xt::linalg::dot(X, xt::transpose(m_aWeights));
-    if (m_bUse_Bias){
-        auto bias_view = xt::view(m_aBias, xt::all());
-        Y = Y + xt::view(bias_view, xt::all(), xt::newaxis());
+    //cout<<"FCLayer forward: \n";
+    //cout<<xt::adapt(X.shape())<<endl;
+    if (m_trainable) {
+        m_aCached_X = X;
+    }    
+    // Y = xt::linalg::dot(X, xt::transpose(m_aWeights));
+    xt::xarray<double> Y = xt::linalg::dot(X, xt::transpose(m_aWeights));    
+    
+    if (m_bUse_Bias) {
+        Y += m_aBias;
     }
+    //cout<<"its oka60";
+    //cout<<xt::adapt(Y.shape())<<endl;
+    
     return Y;
 }
+
 xt::xarray<double> FCLayer::backward(xt::xarray<double> DY) {
-    //YOUR CODE IS HERE
-    m_unSample_Counter++;
-    m_aGrad_W = DY * xt::transpose(m_aCached_X);
-    if (m_bUse_Bias) m_aGrad_b = xt::sum(DY, 0);
-    xt::xarray<double> dX = DY * m_aWeights;
+    m_unSample_Counter += DY.shape()[0];
+    //cout<<"FCLayer backward: \n";
+    xt::xarray<double> dW_batch = outer_stack(DY, m_aCached_X);
+    m_aGrad_W = xt::sum(dW_batch, {0});
+    if (m_bUse_Bias) m_aGrad_b = xt::sum(DY, {0});
+    xt::xarray<double> dX = xt::linalg::dot(DY, m_aWeights);
+    return dX;
 }
+
+// xt::xarray<double> FCLayer::backward(xt::xarray<double> DY) {
+//     m_unSample_Counter += DY.shape()[0];
+//     cout << "FC layer backward: \n";
+
+//     // Calculate gradient of weights using outer_stack function
+//     m_aGrad_W = outer_stack(DY, m_aCached_X);
+
+//     // If bias is used, calculate the gradient for bias
+//     if (m_bUse_Bias) {
+//         m_aGrad_b = xt::sum(DY, 0); // Sum across the batch
+//     }
+
+//     // Calculate the backward pass for X using matrix multiplication
+//     xt::xarray<double> dX = DY * m_aWeights;
+//     cout << "dX shape: " << xt::adapt(dX.shape()) << endl;
+
+//     return dX;
+// }
+
+    // cout<<"aftersum DY \n";
+    // auto m_view = xt::view(m_aWeights, xt::all());
+    // auto dy_view = xt::view(DY, xt::all());
+    // xt::xarray<double> dX = xt::linalg::dot(dy_view, m_view);
+    // cout<<xt::adapt(DY.shape())<<endl;
+    // cout<<"m_aWeights: "<<xt::adapt(m_aWeights.shape())<<endl;
+    // cout<<xt::adapt(dX.shape())<<endl;
+    // return dX;
 
 int FCLayer::register_params(IParamGroup* ptr_group){
     ptr_group->register_param("weights", &m_aWeights, &m_aGrad_W);
