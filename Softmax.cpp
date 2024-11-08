@@ -32,12 +32,18 @@ Softmax::Softmax(const Softmax& orig) {}
 Softmax::~Softmax() {}
 
 xt::xarray<double>Softmax::forward(xt::xarray<double> X){
-    m_aCached_Y = softmax(X);
+    //cout<<"Softmax forward: \n";
+    m_aCached_Y = softmax(X, m_nAxis);
+    //cout<<"no prob dog";
+    //cout<<xt::adapt(m_aCached_Y.shape())<<endl;
     return m_aCached_Y;
 }
-xt::xarray<double>Softmax::backward(xt::xarray<double> DY){
-    //Jacobian j = (diag(y) - y * Y^T) * deltay Y
-    return xt::linalg::dot(xt::diag(m_aCached_Y) - (xt::linalg::outer(m_aCached_Y, m_aCached_Y)), DY); //maybe you should recheck this 
+
+xt::xarray<double> Softmax::backward(xt::xarray<double> DY) {
+    auto jacobians = diag_stack(m_aCached_Y) - outer_stack(m_aCached_Y, m_aCached_Y);
+    xt::xarray<double> results = matmul_on_stack(jacobians, DY);
+    //cout<<"softmax bd: Dx shaep"<<xt::adapt(results.shape())<<endl;
+    return results;
 }
 
 string Softmax::get_desc() {
