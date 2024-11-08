@@ -110,7 +110,7 @@ double_tensor MLPClassifier::predict(
 }
 
 
-double_tensor MLPClassifier::evaluate(DataLoader<double, double>* pLoader){
+double_tensor MLPClassifier::evaluate(DataLoader<double, double>* pLoader){ //chuan
     bool old_mode = this->m_trainable;
     this->set_working_mode(false);
     
@@ -119,11 +119,11 @@ double_tensor MLPClassifier::evaluate(DataLoader<double, double>* pLoader){
     //YOUR CODE IS HERE
     for(auto batch: *pLoader){
         double_tensor X = batch.getData();
+        double_tensor t = batch.getLabel();
         double_tensor Y = this -> forward(X);
-        double_tensor targets = batch.getLabel();
         
-        double_tensor y_pred = xt::argmax(Y, 1);
-        double_tensor y_true = xt::argmax(targets, 1);
+        ulong_tensor y_pred = xt::argmax(Y, 1);
+        ulong_tensor y_true = xt::argmax(t, 1);
 
         meter.accumulate(y_true, y_pred);
     }
@@ -163,18 +163,23 @@ void MLPClassifier::set_working_mode(bool trainable){
 //protected: for the training mode: begin
 double_tensor MLPClassifier::forward(double_tensor X){
     //YOUR CODE IS HERE
+    //cout<<"MLP forward"<<endl;
     double_tensor Y = X;
     for (auto& layer : m_layers){
         Y = layer -> forward(Y);
     }
+    //cout<<"finish forward";
     return Y;
 }
 void MLPClassifier::backward(){
     //YOUR CODE IS HERE
+    //cout<<"MLP backward"<<endl;
     double_tensor dY = m_pLossLayer -> backward();
+    //cout<<"entropy ok"<<endl;
     for (auto it = m_layers.bbegin(); it != m_layers.bend(); ++it) {
         dY = (*it) -> backward(dY);
     }
+    //cout<<"prob backwardy dy"<<endl;
 }
 //protected: for the training mode: end
 
