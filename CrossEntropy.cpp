@@ -26,10 +26,19 @@ double CrossEntropy::forward(xt::xarray<double> X, xt::xarray<double> t) {
   // Todo CODE YOUR
   m_aYtarget = t;
   m_aCached_Ypred = X;
-  return cross_entropy(X, t, m_eReduction);
+  //cout<<"CE forward"<<endl;
+  double ans = -1;
+  if (this -> m_eReduction = REDUCE_MEAN) ans = cross_entropy(X, t, false);
+  else if (this -> m_eReduction = REDUCE_SUM) ans = cross_entropy(X, t, true);
+  return ans;
 }
+
 xt::xarray<double> CrossEntropy::backward() {
-  // Todo CODE 
-  int Norm = m_aYtarget.shape()[0];
-  return -m_aYtarget/(Norm * (m_aCached_Ypred + pow(10,-7)));
+    int Norm = m_aYtarget.shape()[0];
+    xt::xarray<double> results =  -m_aYtarget/(m_aCached_Ypred + 1e-7);
+    if (m_eReduction == REDUCE_MEAN){
+       results /= Norm;
+    }
+    //cout<<"CE backward: "<<xt::adapt(results.shape())<<endl;
+    return results;
 }
