@@ -165,8 +165,8 @@ xt::xarray<double> FCLayer::backward(xt::xarray<double> DY) {
     m_unSample_Counter += DY.shape()[0];
     //cout<<"FCLayer backward: \n";
     xt::xarray<double> dW_batch = outer_stack(DY, m_aCached_X);
-    m_aGrad_W = xt::sum(dW_batch, {0});
-    if (m_bUse_Bias) m_aGrad_b = xt::sum(DY, {0});
+    m_aGrad_W = xt::mean(dW_batch, {0});
+    if (m_bUse_Bias) m_aGrad_b = xt::mean(DY, {0});
     xt::xarray<double> dX = xt::linalg::dot(DY, m_aWeights);
     return dX;
 }
