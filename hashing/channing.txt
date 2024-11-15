@@ -1,48 +1,28 @@
 void insert(int key) {
-    int index = hash(key);
-    
+    int index = hash(key) % size;
     data[index].push_front(key);
 }
 
 void remove(int key) {
-    int index = hash(key);
-    string result = ;
-    listint &slot = data[index];
-    bool found = false;
-    
-    for (auto it = slot.begin(); it != slot.end(); it++) {
-        if (!result.empty())
-            result += ,;
-        result += to_string(it);
+    int index = hash(key) % size;
+    for (auto it = data[index].begin(); it != data[index].end(); it ++) {
+        cout << *it << ",";
+        if (*it == key){
+            data[index].erase(it);
             
-        if (it == key) {
-            slot.erase(it);
-            found = true;
-            break;
+            return;
         }
     }
-    
-    cout  result  ,;
-    if (!found)
-        throw runtime_error (Not found!);
+    cout << "Not found!";
+    return ;
 }
 
 bool search(int key) {
-    int index = hash (key);
-    string result = ;
-    listint &slot = data[index];
-    
-    for (auto it = slot.begin(); it != slot.end(); it++) {
-        if (!result.empty())
-            result += ,;
-        result += to_string(it);
-            
-        if (it == key) {
-            cout  result;
+    int index = hash(key) % size;
+    for (auto it = data[index].begin(); it != data[index].end(); it ++) {
+        if (*it == key){
             return true;
         }
     }
-    
-    cout  result  endl;
     return false;
 }
