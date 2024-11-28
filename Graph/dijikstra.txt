@@ -1,0 +1,61 @@
+void dijkstra(string label) 
+{
+    int sourceVertex = -1;
+    for (int i = 0; i < nover && sourceVertex == -1; i++)
+        if (label == labels[i])
+            sourceVertex = i;
+
+    if (sourceVertex == -1) return;
+
+    int shortestDistances[nover];
+    bool visitedVertices[nover];
+
+    for (int vertex = 0; vertex < nover; vertex++)
+    {
+        shortestDistances[vertex] = INT_MAX;
+        visitedVertices[vertex] = false;
+    }
+
+    shortestDistances[sourceVertex] = 0;
+
+    for (int i = 0; i < nover; i++) 
+    {
+        int closestVertex = -1;
+        int minDistance = INT_MAX;
+
+        for (int j = 0; j < nover; j++) 
+        {
+            if (!visitedVertices[j] && shortestDistances[j] < minDistance) 
+            {
+                closestVertex = j;
+                minDistance = shortestDistances[j];
+            }
+        }
+
+        if (closestVertex == -1) break;
+
+        visitedVertices[closestVertex] = true;
+
+        for (int neighbor = 0; neighbor < nover; neighbor++) 
+        {
+            if (wm[closestVertex][neighbor] != INT_MAX && !visitedVertices[neighbor]) 
+            {
+                int newDistance = shortestDistances[closestVertex] + wm[closestVertex][neighbor];
+                
+                if (newDistance < shortestDistances[neighbor])
+                    shortestDistances[neighbor] = newDistance;
+            }
+        }
+    }
+
+    for (int vertex = 0; vertex < nover; vertex++) 
+    {
+        if (shortestDistances[vertex] == INT_MAX)
+            cout << "infinite";
+        else
+            cout << shortestDistances[vertex];
+        
+        if (vertex < nover - 1) cout << ",";
+    }
+    cout << endl;
+}

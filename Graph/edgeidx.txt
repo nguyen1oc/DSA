@@ -1,0 +1,54 @@
+edgeidx* mst_prim() 
+{
+    if (nover < 1) return nullptr;
+
+    int minEdgeWeights[nover];
+    int parentVertex[nover];
+    bool visitedVertices[nover];
+    edgeidx* mstEdges = new edgeidx[nover - 1];
+
+    for (int vertex = 0; vertex < nover; vertex++) 
+    {
+        minEdgeWeights[vertex] = INT_MAX;
+        visitedVertices[vertex] = false;
+        parentVertex[vertex] = -1;
+    }
+
+    minEdgeWeights[0] = 0;
+    int mstEdgeCount = 0;
+
+    for (int i = 0; i < nover; i++) 
+    {
+        int closestVertex = -1;
+        int minWeight = INT_MAX;
+
+        for (int vertex = 0; vertex < nover; vertex++) 
+        {
+            if (!visitedVertices[vertex] && minEdgeWeights[vertex] < minWeight) 
+            {
+                closestVertex = vertex;
+                minWeight = minEdgeWeights[vertex];
+            }
+        }
+
+        visitedVertices[closestVertex] = true;
+
+        for (int neighbor = 0; neighbor < nover; neighbor++) 
+        {
+            if (wm[closestVertex][neighbor] != INT_MAX && !visitedVertices[neighbor] && wm[closestVertex][neighbor] < minEdgeWeights[neighbor]) 
+            {
+                minEdgeWeights[neighbor] = wm[closestVertex][neighbor];
+                parentVertex[neighbor] = closestVertex;
+            }
+        }
+
+        if (parentVertex[closestVertex] != -1 && closestVertex != parentVertex[closestVertex]) 
+        {
+            mstEdges[mstEdgeCount].idx1 = parentVertex[closestVertex];
+            mstEdges[mstEdgeCount].idx2 = closestVertex;
+            mstEdgeCount++;
+        }
+    }
+
+    return mstEdges;
+}

@@ -1,0 +1,35 @@
+void topologicalSort(void (Graph::*action)(int)) 
+{
+    int incomingEdges[nover];  
+    for (int vertex = 0; vertex < nover; vertex++)
+        incomingEdges[vertex] = 0;
+    
+    for (int vertex = 0; vertex < nover; vertex++) 
+    {
+        Link<GEdge>* edge = srclst[vertex].next;
+        while (edge) 
+        {
+            incomingEdges[edge->element.idx]++;
+            edge = edge->next;
+        }
+    }
+    
+    LQueue<int> zeroIncomingEdgesQueue;  
+    for (int vertex = 0; vertex < nover; vertex++)
+        if (incomingEdges[vertex] == 0)
+            zeroIncomingEdgesQueue.enqueue(vertex);
+    
+    while (!zeroIncomingEdgesQueue.isEmpty()) {
+        int v = zeroIncomingEdgesQueue.dequeue();
+        (this->*action)(v);
+        Link<GEdge>* edge = srclst[v].next;
+        while (edge) 
+        {
+            int neighbor = edge->element.idx;
+            incomingEdges[neighbor]--;
+            if (incomingEdges[neighbor] == 0)
+                zeroIncomingEdgesQueue.enqueue(neighbor);
+            edge = edge->next;
+        }
+    }
+}
