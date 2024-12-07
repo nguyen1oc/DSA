@@ -1,0 +1,32 @@
+Adjacency *BFS(int v)
+    {
+        // v is a vertex we start DFS
+		int numVer = this->adj->getSize();
+		Adjacency* traversedList = new Adjacency;
+		bool* visited = new bool[numVer];
+		for (int i = 0; i < numVer; ++i) {
+			visited[i] = false;
+		}
+
+		list<int> queue;
+		visited[v] = true;
+		queue.push_back(v);
+
+		while (!queue.empty()) {
+			int curVer = queue.front();
+			traversedList->push(curVer);
+			queue.pop_front();
+
+			int curSize = this->adj[curVer].getSize();
+			for (int i = 0; i < curSize; ++i) {
+				int adjVer = this->adj[curVer].getElement(i);
+				if (!visited[adjVer]) {
+					visited[adjVer] = true;
+					queue.push_back(adjVer);
+				}
+			}
+		}
+
+		delete[] visited;
+		return traversedList;
+	}

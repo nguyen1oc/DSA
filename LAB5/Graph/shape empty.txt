@@ -1,0 +1,25 @@
+template<class T>
+string DGraph<T>::shape() {
+    return "[Vertices: " + std::to_string(this->countVertex) + ", Edges: " + std::to_string(this->countEdge) + "]";
+}
+
+template<class T>
+bool DGraph<T>::empty() {
+    return this->countVertex == 0 && this->countEdge == 0;
+}
+
+template<class T>
+void DGraph<T>::clear() {
+    while (this->nodeList != nullptr) {
+        VertexNode* currentVertex = this->nodeList;
+        while (currentVertex->adList != nullptr) {
+            Edge* currentEdge = currentVertex->adList;
+            currentVertex->adList = currentEdge->next;
+            delete currentEdge;
+        }
+        this->nodeList = currentVertex->next;
+        delete currentVertex;
+    }
+    this->countVertex = 0;
+    this->countEdge = 0;
+}

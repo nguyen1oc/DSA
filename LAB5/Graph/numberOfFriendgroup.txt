@@ -1,0 +1,24 @@
+int numberOfFriendGroups(vector<vector<int>>& friends) {
+    int n = friends.size();
+    vector<bool> visited(n, false);
+    int friendGroups = 0;
+
+    // Helper function for depth-first search
+    function<void(int)> dfs = [&](int person) {
+        visited[person] = true;
+        for (int neighbor : friends[person]) {
+            if (!visited[neighbor]) {
+                dfs(neighbor);
+            }
+        }
+    };
+
+    for (int i = 0; i < n; ++i) {
+        if (!visited[i]) {
+            ++friendGroups;
+            dfs(i);
+        }
+    }
+
+    return friendGroups;
+}
