@@ -1,0 +1,75 @@
+#ifndef DGRAPHMODEL_H
+#define DGRAPHMODEL_H
+#include "graph/AbstractGraph.h"
+
+
+//////////////////////////////////////////////////////////////////////
+///////////// GraphModel: Directed Graph Model    ////////////////////
+//////////////////////////////////////////////////////////////////////
+
+template<class T>
+class DGraphModel: public AbstractGraph<T> {
+private:
+public:
+    DGraphModel(
+            bool (*vertexEQ)(T&, T&), 
+            string (*vertex2str)(T&) ):
+        AbstractGraph<T>(vertexEQ, vertex2str) {
+    }
+
+    void connect(T from, T to, float weight = 0) {
+        typename AbstractGraph<T>::VertexNode* fromD = this -> getVertexNode(from);
+        typename AbstractGraph<T>::VertexNode* toD = this -> getVertexNode(to);
+        if (fromD == nullptr) throw VertexNotFoundException(this -> vertex2str(from));
+        if (toD == nullptr) throw VertexNotFoundException(this -> vertex2str(to));
+        fromD -> connect(toD, weight);
+    }
+
+    void disconnect(T from, T to) {
+        typename AbstractGraph<T>::VertexNode* fromD = this -> getVertexNode(from);
+        typename AbstractGraph<T>::VertexNode* toD = this -> getVertexNode(to);
+        if (fromD == nullptr) throw VertexNotFoundException(this -> vertex2str(from));
+        if (toD == nullptr) throw VertexNotFoundException(this -> vertex2str(to));
+        typename AbstractGraph<T>::Edge* edge = fromD -> getEdge(toD);
+        if (edge == nullptr) throw EdgeNotFoundException(this->edge2Str(*edge));
+        fromD -> removeTo(toD);
+    }
+
+    void remove(T vertex) {
+        typename AbstractGraph<T>::VertexNode* remove_1 = this -> getVertexNode(vertex);
+        if (remove_1 == nullptr) throw VertexNotFoundException(this -> vertex2str(vertex));
+
+        typename DLinkedList<typename AbstractGraph<T>::VertexNode*>::Iterator it = this -> nodeList.begin();
+        while (it != this -> nodeList.end()){
+            typename AbstractGraph<T>::VertexNode* node = *it;
+            node -> removeTo(remove_1);  
+            ++it;
+        }
+        DLinkedList<T> remove_2 = remove_1 ->getOutwardEdges();
+        typename DLinkedList<T>::Iterator in_it = remove_2.begin();
+        while (in_it != remove_2.end())
+        {
+            auto *to_node = this -> getVertexNode(*in_it);
+            remove_1 -> removeTo(to_node);
+            ++in_it;
+        }
+        this -> nodeList.removeItem(remove_1);
+        delete remove_1;
+    }
+
+    static DGraphModel<T>* create(
+            T *vertices, int nvertices, Edge<T> *edges, int nedges,
+            bool (*vertexEQ)(T&, T&),
+            string (*vertex2str)(T&)) {
+        DGraphModel<T>* graph_d = new DGraphModel<T>(vertexEQ, vertex2str);
+        for (int i = 0; i < nvertices; ++i) {
+            graph_d -> add(vertices[i]);
+        }
+        for (int i = 0; i < nedges; ++i) {
+            graph_d -> connect(edges[i].from, edges[i].to, edges[i].weight);
+        }
+        return graph_d;
+    }
+};
+
+#endif /* DGRAPHMODEL_H */
