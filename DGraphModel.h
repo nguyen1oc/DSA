@@ -47,7 +47,8 @@ public:
         if (fromD == nullptr) throw VertexNotFoundException(this -> vertex2str(from));
         if (toD == nullptr) throw VertexNotFoundException(this -> vertex2str(to));
         typename AbstractGraph<T>::Edge* edge = fromD -> getEdge(toD);
-        if (edge == nullptr) throw EdgeNotFoundException(this->edge2Str(*edge));
+        typename AbstractGraph<T>::Edge temp(fromD, toD);
+        if (edge == nullptr) throw EdgeNotFoundException(this->edge2Str(temp));
         fromD -> removeTo(toD);
     }
 
@@ -70,7 +71,6 @@ public:
             ++in_it;
         }
         this -> nodeList.removeItem(remove_1);
-        delete remove_1;
     }
 
     static DGraphModel<T>* create(
