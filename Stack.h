@@ -41,13 +41,16 @@ public:
         
     }
     T pop(){
-        if (empty()) {
-            throw std::underflow_error("Stack is empty");
+        if (list.empty()){
+            throw Underflow("Stack");
         }
         return list.removeAt(list.size() - 1);
     }
     T& peek(){
         //TODO: return the top item
+        if (list.empty()){
+            throw Underflow("Stack");
+        }
         return list.get(list.size() - 1);
     }    
     bool empty(){
