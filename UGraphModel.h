@@ -51,38 +51,33 @@ public:
     {
         typename AbstractGraph<T>::VertexNode* fromU = this -> getVertexNode(from);
         typename AbstractGraph<T>::VertexNode* toU = this -> getVertexNode(to);
-        if (fromU == nullptr) throw VertexNotFoundException(this->vertex2str(from));
-        if (toU == nullptr) throw VertexNotFoundException(this->vertex2str(to));
-        if (fromU != toU){
-           typename AbstractGraph<T>::Edge* edge_2 = toU -> getEdge(fromU);
-           if (edge_2 == nullptr) throw EdgeNotFoundException(this->edge2Str(*edge_2));
-           toU -> removeTo(fromU);
-        }
+        if (fromU == nullptr) throw VertexNotFoundException(this -> vertex2str(from));
+        if (toU == nullptr) throw VertexNotFoundException(this -> vertex2str(to));
+
         typename AbstractGraph<T>::Edge* edge_1 = fromU -> getEdge(toU);
-        if (edge_1 == nullptr) throw EdgeNotFoundException(this->edge2Str(*edge_1));
+        typename AbstractGraph<T>::Edge temp_1(fromU, toU);
+        if (edge_1 == nullptr) throw EdgeNotFoundException(this -> edge2Str(temp_1));
+        
+        typename AbstractGraph<T>::Edge* edge_2 = toU -> getEdge(fromU);
+        typename AbstractGraph<T>::Edge temp_2(toU, fromU);
+        if (edge_2 == nullptr) throw EdgeNotFoundException(this -> edge2Str(temp_2));
         fromU -> removeTo(toU);
+        toU -> removeTo(fromU);
     }
     void remove(T vertex)
     {
         typename AbstractGraph<T>::VertexNode* remove_1 = this -> getVertexNode(vertex);
         if (remove_1 == nullptr) throw VertexNotFoundException(this -> vertex2str(vertex));
-
         typename DLinkedList<typename AbstractGraph<T>::VertexNode*>::Iterator it = this -> nodeList.begin();
-        while (it != this -> nodeList.end()){
-            typename AbstractGraph<T>::VertexNode* node = *it;
-            node -> removeTo(remove_1);  
-            ++it;
-        }
-        DLinkedList<T> remove_2 = remove_1 ->getOutwardEdges();
-        typename DLinkedList<T>::Iterator in_it = remove_2.begin();
-        while (in_it != remove_2.end())
-        {
-            auto *to_node = this -> getVertexNode(*in_it);
-            remove_1 -> removeTo(to_node);
-            ++in_it;
+        while (it != this -> nodeList.end()) {
+            typename AbstractGraph<T>::VertexNode* remove_incre = *it;
+            if (remove_incre != remove_1) {
+                remove_incre -> removeTo(remove_1);
+                remove_1 -> removeTo(remove_incre);
+            }
+            it++;
         }
         this -> nodeList.removeItem(remove_1);
-        delete remove_1;
     }
     static UGraphModel<T> *create(
         T *vertices, int nvertices, Edge<T> *edges, int nedges,
