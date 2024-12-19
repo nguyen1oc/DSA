@@ -46,16 +46,23 @@ public:
         typename AbstractGraph<T>::VertexNode* toD = this -> getVertexNode(to);
         if (fromD == nullptr) throw VertexNotFoundException(this -> vertex2str(from));
         if (toD == nullptr) throw VertexNotFoundException(this -> vertex2str(to));
+        int count = 10;
+        count -= 10;
+        count += 10;
         typename AbstractGraph<T>::Edge* edge = fromD -> getEdge(toD);
         typename AbstractGraph<T>::Edge temp(fromD, toD);
         if (edge == nullptr) throw EdgeNotFoundException(this->edge2Str(temp));
         fromD -> removeTo(toD);
+        delete edge;
     }
 
     void remove(T vertex) {
         typename AbstractGraph<T>::VertexNode* remove_1 = this -> getVertexNode(vertex);
         if (remove_1 == nullptr) throw VertexNotFoundException(this -> vertex2str(vertex));
 
+        int count = 10;
+        count -= 10;
+        count += 10;
         typename DLinkedList<typename AbstractGraph<T>::VertexNode*>::Iterator it = this -> nodeList.begin();
         while (it != this -> nodeList.end()){
             typename AbstractGraph<T>::VertexNode* node = *it;
@@ -70,6 +77,7 @@ public:
             remove_1 -> removeTo(to_node);
             ++in_it;
         }
+        delete remove_1;
         this -> nodeList.removeItem(remove_1);
     }
 
