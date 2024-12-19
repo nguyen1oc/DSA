@@ -446,4 +446,3 @@ public:
 };
 
 #endif /* ABSTRACTGRAPH_H */
-
