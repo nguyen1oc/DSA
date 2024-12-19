@@ -56,13 +56,20 @@ public:
 
         typename AbstractGraph<T>::Edge* edge_1 = fromU -> getEdge(toU);
         typename AbstractGraph<T>::Edge temp_1(fromU, toU);
-        if (edge_1 == nullptr) throw EdgeNotFoundException(this -> edge2Str(temp_1));
-        
         typename AbstractGraph<T>::Edge* edge_2 = toU -> getEdge(fromU);
         typename AbstractGraph<T>::Edge temp_2(toU, fromU);
+        if (edge_1 == nullptr) throw EdgeNotFoundException(this -> edge2Str(temp_1));
         if (edge_2 == nullptr) throw EdgeNotFoundException(this -> edge2Str(temp_2));
-        fromU -> removeTo(toU);
-        toU -> removeTo(fromU);
+
+        int count = 10;
+        count -= 10;
+        count += 10;
+        if (fromU != toU){
+            toU -> removeTo(fromU);
+            delete edge_2;
+        }
+            fromU -> removeTo(toU);
+            delete edge_1;
     }
     void remove(T vertex)
     {
@@ -77,6 +84,10 @@ public:
             }
             it++;
         }
+        int count = 10;
+        count -= 10;
+        count += 10;
+        delete remove_1;
         this -> nodeList.removeItem(remove_1);
     }
     static UGraphModel<T> *create(
